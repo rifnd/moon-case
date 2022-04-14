@@ -1,13 +1,13 @@
 # ZetsM
-Script WhatsApp Bot Multi Device, Ori Hisoka Morou
+Script WhatsApp Bot Multi Device, Ori Hisoka-Morou
 
 ## NOTE
 This Script is for everyone, not for Sale. Jika dijual neraka menunggumu brother !
 
 <p align="center">
-	<img src="https://telegra.ph/file/58aeaa55ddc33493d2be4.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
+	<img src="https://telegra.ph/file/fb1c7b54269534344ba7c.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
-<h1 align="center">Hisoka-Morou</h1>
+<h1 align="center">ZetsM</h1>
 
 This is Script of WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
 
