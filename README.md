@@ -1,18 +1,18 @@
-# Hisoka-Morou
-Script WhatsApp Bot Multi Device
+# ZetsM
+Script WhatsApp Bot Multi Device, Ori Hisoka Morou
 
 ## NOTE
 This Script is for everyone, not for Sale. Jika dijual neraka menunggumu brother !
 
 <p align="center">
-	<img src="https://telegra.ph/file/09cc0981ccf07754d0af6.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
+	<img src="https://telegra.ph/file/58aeaa55ddc33493d2be4.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
 <h1 align="center">Hisoka-Morou</h1>
 
 This is Script of WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
 
-## My Project
-WhatsApp Bot normal [`DikaArdnt/Hisoka-Morrow`](https://github.com/DikaArdnt/Hisoka-Morrow)
+## Infoooo
+> Original Sc dari https://DikaArdnt/Hisoka-Morou
 WhatsApp Bot Multi Device [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
 
 
@@ -24,8 +24,8 @@ WhatsApp Bot Multi Device [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdn
 
 
 ```bash
-git clone https://github.com/DikaArdnt/Hisoka-Morou
-cd Hisoka-Morou
+git clone https://github.com/Nando35/ZetsM
+cd ZetsM
 npm install
 ```
 
@@ -45,8 +45,8 @@ apt update && apt upgrade
 apt install git -y
 apt install nodejs -y
 apt install ffmpeg -y
-git clone https://github.com/DikaArdnt/Hisoka-Morou
-cd Hisoka-Morou
+git clone https://github.com/Nando35/ZetsM
+cd ZetsM
 npm install
 ```
 
@@ -84,5 +84,4 @@ Get Apikey zenz on [`zenz`](https://zenzapi.xyz/pricing)
 License: [MIT](https://en.wikipedia.org/wiki/MIT_License)
 
 Support Me
-* [`Paypal`](https://www.paypal.me/Cakhaho)
-* [`Saweria`](https://saweria.co/DikaArdnt)
+* [`Saweria`](https://saweria.co/Nando35)
