@@ -13,6 +13,8 @@ const { exec, spawn, execSync } = require("child_process")
 const axios = require('axios')
 const path = require('path')
 const os = require('os')
+const hx = require('hxz-api')
+const xa = require('xfarr-api')
 const moment = require('moment-timezone')
 const { JSDOM } = require('jsdom')
 const speed = require('performance-now')
@@ -20,6 +22,14 @@ const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
 const primbon = new Primbon()
 const { smsg, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, format, parseMention, getRandom } = require('./lib/myfunc')
+
+//Apikey
+const setting = JSON.parse(fs.readFileSync('./apikey.json'))
+
+//limit
+limitawal = '100'
+botname = 'ZETS - MD'
+wm = '© zets-md'
 
 // read database
 let tebaklagu = db.data.game.tebaklagu = []
@@ -538,11 +548,11 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             }
             break
 	    case 'donasi': case 'sewabot': case 'sewa': case 'buypremium': case 'donate': {
-                hisoka.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/74fd634010128be37972c.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⭔ 13k Per Group via E-Walet 1 Month\n⭔ 18k via pulsa 1 Month\n\n Premium Price Bot\n⭔ 8k per User 1 bulan\n\nPayment can be via Paypal/link aja/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6288292024190 (Owner)\n\nDonate For Me : \n\n⭔ Paypal : https://www.paypal.me/Cakhaho\n⭔ Saweria : https://saweria.co/DikaArdnt` }, { quoted: m })
+                hisoka.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/f8d35118f27c5b371da2b.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⭔ 15k Per Group via E-Walet 1 Month\n⭔ 20k via pulsa 1 Month\n\n Premium Price Bot\n⭔ 10k per User 1 bulan\n\nPayment can be via Paypal/link aja/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6281252848955 (Owner)\n\nDonate For Me : \n\n⭔ Paypal : https://www.paypal.me/Rifando35\n⭔ Saweria : https://saweria.co/Nando35` }, { quoted: m })
             }
             break
             case 'sc': {
-                m.reply('Script : https://github.com/DikaArdnt/Hisoka-Morou\n\n Dont Forget Give Star\n\nDonate : 6281615075793 (Link Aja)\nSaweria : https://saweria.co/DikaArdnt\nPaypal : https://www.paypal.me/Cakhaho\n\n Dont Forget Donate')
+                m.reply('Script : https://github.com/Nando35/ZetsM\nScript ori : https://github.com/DikaArdnt/Hisoka-Morou\n\n Dont Forget Give Star\n\nDonate : 628125284895 (Dana / gopay)\nSaweria : https://saweria.co/Nando35\nPaypal : https://www.paypal.me/Rifando35\n\n Dont Forget Donate')
             }
             break
             case 'chat': {
@@ -1546,11 +1556,22 @@ break
             }
             break
             case 'pinterest': {
+                if (!text) throw `Example : ${prefix + command}`
                 m.reply(mess.wait)
-		let { pinterest } = require('./lib/scraper')
+		        let { pinterest } = require('./lib/scraper')
                 anu = await pinterest(text)
-                result = anu[Math.floor(Math.random() * anu.length)]
-                hisoka.sendMessage(m.chat, { image: { url: result }, caption: '⭔ Media Url : '+result }, { quoted: m })
+                result = anu[Math.floor(Math.random() * anu.length)]               
+                let buttons = [                   
+                    {buttonId: `pinterest ${text}`, buttonText: {displayText: '► NEXT'}, type: 1}
+                ]
+                let buttonMessage = {
+                    image: { url: result },
+                    caption: `*Klik Next Untuk Melanjutkan*`,
+                    footer: hisoka.user.name,
+                    buttons: buttons,
+                    headerType: 4
+                }
+                hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
             break
             case 'anime': case 'waifu': case 'husbu': case 'neko': case 'shinobu': case 'megumin': case 'waifus': case 'nekos': case 'trap': case 'blowjob': {
@@ -1646,22 +1667,25 @@ break
                 hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
             break
-            case '3dchristmas': case '3ddeepsea': case 'americanflag': case '3dscifi': case '3drainbow': case '3dwaterpipe': case 'halloweenskeleton': case 'sketch': case 'bluecircuit': case 'space': case 'metallic': case 'fiction': case 'greenhorror': case 'transformer': case 'berry': case 'thunder': case 'magma': case '3dcrackedstone': case '3dneonlight': case 'impressiveglitch': case 'naturalleaves': case 'fireworksparkle': case 'matrix': case 'dropwater':  case 'harrypotter': case 'foggywindow': case 'neondevils': case 'christmasholiday': case '3dgradient': case 'blackpink': case 'gluetext': {
-                if (!text) throw `Example : ${prefix + command} text`
-                m.reply(mess.wait)
-                hisoka.sendMessage(m.chat, { image: { url: api('zenz', '/textpro/' + command, { text: text }, 'apikey') }, caption: `Text Pro ${command}` }, { quoted: m})
-	    }
-            break
-	    case 'shadow': case 'romantic': case 'smoke': case 'burnpapper': case 'naruto': case 'lovemsg': case 'grassmsg': case 'lovetext': case 'coffecup': case 'butterfly': case 'harrypotter': case 'retrolol': {
-                if (!text) throw 'No Query Text'
-                m.reply(mess.wait)
-                hisoka.sendMessage(m.chat, { image: { url: api('zenz', '/photooxy/' + command, { text: text }, 'apikey') }, caption: `Photo Oxy ${command}` }, { quoted: m })
-            }
-            break
             case 'ffcover': case 'crossfire': case 'galaxy': case 'glass': case 'neon': case 'beach': case 'blackpink': case 'igcertificate': case 'ytcertificate': {
                 if (!text) throw 'No Query Text'
                 m.reply(mess.wait)
-                hisoka.sendMessage(m.chat, { image: { url: api('zenz', '/ephoto/' + command, { text: text }, 'apikey') }, caption: `Ephoto ${command}` }, { quoted: m })
+                anu = await getBuffer(`https://api.dapuhy.xyz/api/ephoto/${command}?text=${text}&apikey=${setting.dapaapi}`)
+                hisoka.sendMessage(m.chat, { image: anu, caption: `Ephoto ${command}` }, { quoted: m })
+            }
+            break
+	case 'shadow': case 'romantic': case 'smoke': case 'burnpapper': case 'naruto': case 'lovemsg': case 'grassmsg': case 'lovetext': case 'coffecup': case 'butterfly': case 'harrypotter': case 'retrolol': {
+                if (!text) throw 'No Query Text'
+                m.reply(mess.wait)
+                anu = await getBuffer(`https://api.dapuhy.xyz/api/photooxy/${command}?text=${text}&apikey=${setting.dapaapi}`)
+                hisoka.sendMessage(m.chat, { image: anu, caption: `Photo Oxy ${command}` }, { quoted: m })
+            }
+            break
+case 'bokeh': case 'brokenglass': case 'artpapercut': case 'neondevil': case '3dunderwater': case 'bearlogo': case 'biscuit': case 'abstragolf': case 'rusymetal': case 'fruitjuice': case 'icecold': case 'marble': case 'horror': case 'plasticbagdrug': case 'honey': case 'christmas': case 'breakwall': case 'dropwater': case 'greenneon': case 'wood': case 'metalrainbow': case 'purplegem': case 'shinymetal': case 'yellowjewelry': case 'erodedmetal': case 'bronzeglitter': case 'biscuit': case 'bluegem': case 'bluemetal': case '3dglowing': case 'beautifulgraffity': case 'futuristic': case 'snow': {
+                if (!text) throw 'No Query Text'
+                m.reply(mess.wait)
+anu = await getBuffer(`https://api.dapuhy.xyz/api/textpro/${command}?text=${text}&apikey=${setting.dapaapi}`)
+                hisoka.sendMessage(m.chat, { image: anu, caption: `Text Pro ${command}` }, { quoted: m })
             }
             break
 	    case 'nomerhoki': case 'nomorhoki': {
@@ -1982,7 +2006,7 @@ break
 	        case 'tiktok': case 'tiktoknowm': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/downloader/tiktok', { url: text }, 'apikey'))
+                let anu = await fetchJson(`https://api-xcoders.xyz/api/download/tiktok?url=${text}&apikey=5S3epf7hC2`)
                 let buttons = [
                     {buttonId: `tiktokwm ${text}`, buttonText: {displayText: '► With Watermark'}, type: 1},
                     {buttonId: `tiktokmp3 ${text}`, buttonText: {displayText: '♫ Audio'}, type: 1}
@@ -2000,7 +2024,7 @@ break
             case 'tiktokwm': case 'tiktokwatermark': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/downloader/tiktok', { url: text }, 'apikey'))
+                let anu = await fetchJson(`https://api-xcoders.xyz/api/download/tiktok?url=${text}&apikey=5S3epf7hC2`)
                 let buttons = [
                     {buttonId: `tiktoknowm ${text}`, buttonText: {displayText: '► No Watermark'}, type: 1},
                     {buttonId: `tiktokmp3 ${text}`, buttonText: {displayText: '♫ Audio'}, type: 1}
@@ -2015,10 +2039,10 @@ break
                 hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
             break
-            case 'tiktokmp3': case 'tiktokaudio': {
+case 'tiktokmp3': case 'tiktokaudio': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/downloader/musically', { url: text }, 'apikey'))
+                let anu = await fetchJson(`https://api-xcoders.xyz/api/download/tiktok2?url=https://vt.tiktok.com/ZSd8d6PDx/&apikey=5S3epf7hC2`)
                 let buttons = [
                     {buttonId: `tiktoknowm ${text}`, buttonText: {displayText: '► No Watermark'}, type: 1},
                     {buttonId: `tiktokwm ${text}`, buttonText: {displayText: '► With Watermark'}, type: 1}
@@ -2030,36 +2054,47 @@ break
                     headerType: 2
                 }
                 let msg = await hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
-                hisoka.sendMessage(m.chat, { audio: { url: anu.result.audio }, mimetype: 'audio/mpeg'}, { quoted: msg })
+                hisoka.sendMessage(m.chat, { audio: { url: anu.result.audio.url }, mimetype: 'audio/mpeg'}, { quoted: msg })
             }
             break
-	        case 'instagram': case 'ig': case 'igdl': {
-                if (!text) throw 'No Query Url!'
-                m.reply(mess.wait)
-                if (/(?:\/p\/|\/reel\/|\/tv\/)([^\s&]+)/.test(isUrl(text)[0])) {
-                    let anu = await fetchJson(api('zenz', '/downloader/instagram2', { url: isUrl(text)[0] }, 'apikey'))
-                    for (let media of anu.data) hisoka.sendMedia(m.chat, media, '', `Download Url Instagram From ${isUrl(text)[0]}`, m)
-                } else if (/\/stories\/([^\s&]+)/.test(isUrl(text)[0])) {
-                    let anu = await fetchJson(api('zenz', '/downloader/instastory', { url: isUrl(text)[0] }, 'apikey'))
-                    hisoka.sendMedia(m.chat, anu.media[0].url, '', `Download Url Instagram From ${isUrl(text)[0]}`, m)
+case 'igeh': case 'instagram': case 'ig': case 'igdl': {
+                if (!text) throw 'Masukkan Query Link!'
+                m.reply(mess.wait)                
+                let anu = await fetchJson(`https://yx-api.herokuapp.com/api/download/ig?url=${text}`)
+                let buttons = [
+                    {buttonId: `tiktokn ${text}`, buttonText: {displayText: 'Oke'}, type: 1},
+                    {buttonId: `tiktokp3 ${text}`, buttonText: {displayText: 'Makasih'}, type: 1}
+                ]
+                let buttonMessage = {
+                    video: { url: anu.link },
+                    caption: `Download From ${text}`,
+                    footer: 'Press The Button Below',
+                    buttons: buttons,
+                    headerType: 5
                 }
+                hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
+            break
+case 'instagramstory': case 'igs': case 'igstory': {
+
+                if (!text) throw 'Masukkan username'
+
+                m.reply(mess.wait)
+
+                let anu = await fetchJson(`https://api-xcoders.xyz/api/download/igstory?username=${text}&apikey=5S3epf7hC2`)
+
+                hisoka.sendMessage(m.chat, { video: { url: anu.result[0].downloadUrl }, caption: `⭔ Type : ${anu.result[0].type}`}, { quoted: m })
+
+            }
+
             break
 		/** Backup misal yg atas ga keluar video **/
-		case 'igeh': case 'instagram2': case 'ig2': case 'igdl2': {
-                if (!text) throw 'Masukkan Query Link!'
-                m.reply(mess.wait)
-                
-                let anu = await fetchJson(api('zenz', '/downloader/instagram2', { url:text }, 'apikey'))
-                hisoka.sendMessage(m.chat, { video: { url: anu.data[0] } }, { quoted: m })
-            }
-            break
             case 'joox': case 'jooxdl': {
                 if (!text) throw 'No Query Title'
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/downloader/joox', { query: text }, 'apikey'))
-                let msg = await hisoka.sendImage(m.chat, anu.result.img, `⭔ Title : ${anu.result.lagu}\n⭔ Album : ${anu.result.album}\n⭔ Singer : ${anu.result.penyanyi}\n⭔ Publish : ${anu.result.publish}\n⭔ Lirik :\n${anu.result.lirik.result}`, m)
-                hisoka.sendMessage(m.chat, { audio: { url: anu.result.mp4aLink }, mimetype: 'audio/mpeg', fileName: anu.result.lagu+'.m4a' }, { quoted: msg })
+                let anu = await fetchJson(`https://api.lolhuman.xyz/api/jooxplay?apikey=${setting.lolkey}&query=${text}`)
+                let msg = await hisoka.sendImage(m.chat, anu.result.image, `⭔ Title : ${anu.result.info.song}\n⭔ Album : ${anu.result.info.album}\n⭔ Singer : ${anu.result.info.song}\n⭔ Publish : ${anu.result.info.date}\n⭔ Lirik :\n${anu.result.audio[0].link}`, m)
+                hisoka.sendMessage(m.chat, { audio: { url: anu.result.audio[0].link }, mimetype: 'audio/mpeg' }, { quoted: msg })
             }
             break
             case 'soundcloud': case 'scdl': {
@@ -2071,21 +2106,37 @@ break
             }
             break
 	        case 'twitdl': case 'twitter': {
+
                 if (!text) throw 'Masukkan Query Link!'
+
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/api/downloader/twitter', { url: text }, 'apikey'))
+
+                let anu = await fetchJson(`https://api.dapuhy.xyz/api/socialmedia/twitter?url=${text}&apikey=piceg`)
+
                 let buttons = [
+
                     {buttonId: `twittermp3 ${text}`, buttonText: {displayText: '► Audio'}, type: 1}
+
                 ]
+
                 let buttonMessage = {
-                    video: { url: anu.result.HD || anu.result.SD },
+
+                    video: { url: anu.hd },
+
                     caption: util.format(anu.result),
+
                     footer: 'Press The Button Below',
+
                     buttons: buttons,
+
                     headerType: 5
+
                 }
+
                 hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
+
             }
+
             break
             case 'twittermp3': case 'twitteraudio': {
                 if (!text) throw 'Masukkan Query Link!'
@@ -2106,11 +2157,17 @@ break
             }
             break
 	        case 'fbdl': case 'fb': case 'facebook': {
+
                 if (!text) throw 'Masukkan Query Link!'
+
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/api/downloader/facebook', { url: text }, 'apikey'))
-                hisoka.sendMessage(m.chat, { video: { url: anu.result.url }, caption: `⭔ Title : ${anu.result.title}`}, { quoted: m })
+
+                let anu = await fetchJson(`https://api-xcoders.xyz/api/download/fb2?url=${text}&apikey=5S3epf7hC2`)
+
+                hisoka.sendMessage(m.chat, { video: { url: anu.result.links.hd }, caption: `⭔ Source : ${text}`}, { quoted: m })
+
             }
+
             break
 	        case 'pindl': case 'pinterestdl': {
                 if (!text) throw 'Masukkan Query Link!'
@@ -2784,47 +2841,26 @@ let sectionnya= [{
 							},
 
 							{
-
 								"title": "Owner Command",
-
 								"rows": [
-
 									{
-
 										"title": "Owner Fitur",
-
 										"description": "menampilkan Owner Fitur ( Khusus Owner )",
-
 										"rowId": `${prefix}ownermenu`
-
 									}
-
 								]
-
 							},
-
 							{
-
 								"title": "Thanks To",
-
 								"rows": [
-
 									{
-
 										"title": "Contributor",
-
 										"description": "menampilkan Nama Teman - Teman Saya Yang Sudah Membantu Merakit Bot Ini !!",
-
 										"rowId": `${prefix}tqtt`
-
 									}
-
 								]
-
 							}
-
 						]
-
 hisoka.sendList(m.chat, `Halo ${pushname}`, `───❑ INFO BOT
 
 
@@ -2832,49 +2868,22 @@ hisoka.sendList(m.chat, `Halo ${pushname}`, `───❑ INFO BOT
 LIBRAY:  *BAILEYS MD*`, "Lol", "List Bor ", sectionnya, { quoted: m})
 
 break
-            case 'menu': case 'help': case '?': {
-            let data = fs.readFileSync('./lib/image.js')
-jsonData = JSON.parse(data);
-randIndex = Math.floor(Math.random() * jsonData.length)
-randKey = jsonData[randIndex];
-hasil = await getBuffer(randKey.result)
-            anu = ` 
-Hi ${pushname}
-Semoga Harimu Menyenangkan
+            case 'menu': case 'help': {
+                buffer = await getBuffer(`https://telegra.ph/file/2939f98df8e322970d8ba.jpg`)
+                anu = `
+┌───「 *ZETS - MD* 」───⭓                
+├⭓ *( ℹ️ ) Information* ┈ ⳹
+│
+│⭔ Name Kamu : _${pushname}_
+│⭔ Limit kamu : _${limitawal}_
+│⭔ Tanggal : _${moment.tz('Asia/Jakarta').format('DD/MM/YY')}_
+│⭔ Waktu : _${moment.tz('Asia/Jakarta').format('HH:mm:ss')}_
+│⭔ Runtime : _${runtime(process.uptime())}_
+│⭔ Library : _Baileys-Md_
+└──────────────┈ ⳹
 
-Saya Adalah ${botname}
-Dan Saya Adalah Pengguna Script Ini 
-Silahkan Gunakan Bot Dengan Bijak 🥰
-            `
-            const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                           hydratedContentText: anu,
-                            locationMessage: {
-                            jpegThumbnail: hasil},
-                            hydratedFooterText: `hsjsj Created By : ted`,
-                            hydratedButtons: [{
-                                urlButton: {
-                                    displayText: 'Instagram',
-                                    url: 'https://instagram.com/alya.xzy'
-                               }
-                            }, {
-                                quickReplyButton: {
-                                    displayText: 'All Menu',
-                                    id: `${prefix}menuall`
-                                }
-                            }]
-                        }
-                    }
-               }), { userJid: m.chat })
-                hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-
-                }
-
-break
-            case 'menuall': {
-                buffer = await getBuffer(`https://telegra.ph/file/449e30677faaa5435e6d6.jpg`)
-                anu = `┌──⭓ *Group Menu*
+┌────────────────⭓              
+├⭓ *( 👥 ) Group Menu*
 │
 │⭔ ${prefix}linkgroup
 │⭔ ${prefix}ephemeral [option]
@@ -2896,10 +2905,10 @@ break
 │⭔ ${prefix}upvote
 │⭔ ${prefix}cekvote
 │⭔ ${prefix}hapusvote
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Downloader Menu*
+┌────────────────⭓
+├⭓ *( ⬇️ ) Downloader Menu*
 │
 │⭔ ${prefix}tiktoknowm [url]
 │⭔ ${prefix}tiktokwm [url]
@@ -2916,10 +2925,10 @@ break
 │⭔ ${prefix}umma [url]
 │⭔ ${prefix}joox [query]
 │⭔ ${prefix}soundcloud [url]
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Search Menu*
+┌────────────────⭓
+├⭓ ( 🔎 ) *Search Menu*
 │
 │⭔ ${prefix}play [query]
 │⭔ ${prefix}yts [query]
@@ -2931,10 +2940,10 @@ break
 │⭔ ${prefix}ytsearch [query]
 │⭔ ${prefix}ringtone [query]
 │⭔ ${prefix}stalk [option] [query]
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Random Menu*
+┌────────────────⭓
+├⭓ *( 🛵 ) Random Menu*
 │
 │⭔ ${prefix}coffe
 │⭔ ${prefix}quotesanime
@@ -2953,10 +2962,10 @@ break
 │⭔ ${prefix}nekos (nsfw)
 │⭔ ${prefix}trap (nsfw)
 │⭔ ${prefix}blowjob (nsfw)
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Text Pro Menu*
+┌────────────────⭓
+├⭓ *( ✒️ ) Text Pro Menu*
 │
 │⭔ ${prefix}3dchristmas
 │⭔ ${prefix}3ddeepsea
@@ -2989,10 +2998,10 @@ break
 │⭔ ${prefix}3dgradient
 │⭔ ${prefix}blackpink
 │⭔ ${prefix}gluetext
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Photo Oxy Menu*
+┌────────────────⭓
+├⭓ *( 📷 ) Photo Oxy Menu*
 │
 │⭔ ${prefix}shadow
 │⭔ ${prefix}romantic
@@ -3006,10 +3015,10 @@ break
 │⭔ ${prefix}butterfly
 │⭔ ${prefix}harrypotter
 │⭔ ${prefix}retrolol
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Ephoto Menu*
+┌────────────────⭓
+├⭓ *( 🖼️ ) Ephoto Menu*
 │
 │⭔ ${prefix}ffcover
 │⭔ ${prefix}crossfire
@@ -3020,10 +3029,10 @@ break
 │⭔ ${prefix}blackpink
 │⭔ ${prefix}igcertificate
 │⭔ ${prefix}ytcertificate
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Fun Menu*
+┌────────────────⭓
+├⭓ *( 🐤 ) Fun Menu*
 │
 │⭔ ${prefix}halah
 │⭔ ${prefix}hilih
@@ -3038,10 +3047,10 @@ break
 │⭔ ${prefix}tebak [option]
 │⭔ ${prefix}math [mode]
 │⭔ ${prefix}suitpvp [@tag]
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Primbon Menu*
+┌────────────────⭓
+├⭓ *( ⭐ ) Primbon Menu*
 │
 │⭔ ${prefix}nomorhoki
 │⭔ ${prefix}artimimpi
@@ -3073,10 +3082,10 @@ break
 │⭔ ${prefix}masasubur
 │⭔ ${prefix}zodiak
 │⭔ ${prefix}shio
-│
-└───────⭓
+└──────────────┈ ⳹
 
-┌──⭓ *Convert Menu*
+┌────────────────⭓
+├⭓ *( 🎊 ) Convert Menu*
 │
 │⭔ ${prefix}toimage
 │⭔ ${prefix}removebg
@@ -3091,10 +3100,9 @@ break
 │⭔ ${prefix}ebinary
 │⭔ ${prefix}dbinary
 │⭔ ${prefix}styletext
-│
-└───────⭓
-
-┌──⭓ *Main Menu*
+└──────────────┈ ⳹
+┌────────────────⭓
+├⭓ *( 🎠 ) Main Menu*
 │
 │⭔ ${prefix}ping
 │⭔ ${prefix}owner
@@ -3106,10 +3114,9 @@ break
 │⭔ ${prefix}listgc
 │⭔ ${prefix}listonline
 │⭔ ${prefix}speedtest
-│
-└───────⭓
-
-┌──⭓ *Database Menu*
+└──────────────┈ ⳹
+┌────────────────⭓
+├⭓ *( 📂 ) Database Menu*
 │
 │⭔ ${prefix}setcmd
 │⭔ ${prefix}listcmd
@@ -3119,30 +3126,27 @@ break
 │⭔ ${prefix}listmsg
 │⭔ ${prefix}getmsg
 │⭔ ${prefix}delmsg
-│
-└───────⭓
-
-┌──⭓ *Anonymous Menu*
+└──────────────┈ ⳹
+┌────────────────⭓
+├⭓ *( 👾 ) Anonymous Menu*
 │
 │⭔ ${prefix}anonymous
 │⭔ ${prefix}start
 │⭔ ${prefix}next
 │⭔ ${prefix}keluar
 │⭔ ${prefix}sendkontak
-│
-└───────⭓
-
-┌──⭓ *Islamic Menu*
+└──────────────┈ ⳹
+┌────────────────⭓
+├⭓ *( ☪️ ) Islamic Menu*
 │
 │⭔ ${prefix}iqra
 │⭔ ${prefix}hadist
 │⭔ ${prefix}alquran
 │⭔ ${prefix}juzamma
 │⭔ ${prefix}tafsirsurah
-│
-└───────⭓
-
-┌──⭓ *Voice Changer*
+└──────────────┈ ⳹
+┌────────────────⭓
+├⭓ *( 🎙️ ) Voice Changer*
 │
 │⭔ ${prefix}bass
 │⭔ ${prefix}blown
@@ -3155,10 +3159,9 @@ break
 │⭔ ${prefix}robot
 │⭔ ${prefix}slow
 │⭔ ${prefix}tupai
-│
-└───────⭓
-
-┌──⭓ *Owner Menu*
+└──────────────┈ ⳹
+┌────────────────⭓
+├──⭓ *( 👤 ) Owner Menu*
 │
 │⭔ ${prefix}react [emoji]
 │⭔ ${prefix}chat [option]
@@ -3171,27 +3174,48 @@ break
 │⭔ ${prefix}setppbot [image]
 │⭔ ${prefix}setexif
 │
-└───────⭓`
+└──────────────┈ ⳹
+`
                 const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                     templateMessage: {
                         hydratedTemplate: {
                            hydratedContentText: anu,
                             locationMessage: {
                             jpegThumbnail: buffer},
-                            hydratedFooterText: `hsjsj Created By : ted`,
-                            hydratedButtons: [{
-                                urlButton: {
-                                    displayText: 'Instagram',
-                                    url: 'https://instagram.com/alya.xzy'
-                               }
-                            }, {
-                                quickReplyButton: {
-                                    displayText: 'Donasi',
-                                    id: `${prefix}donasi`
-                                }
-                            }]
-                        }
-                    }
+                            hydratedFooterText: `${wm}`,
+                            hydratedButtons: [{          
+            "urlButton": {
+              "displayText": "My Group",
+              "url": "https://chat.whatsapp.com/I5tQ4U2B7CVFh3P5QmvgLv"
+            }
+          },
+          {
+            "callButton": {
+              "displayText": "Call Owner",
+              "phoneNumber": "+62 812-528-48955"
+            }
+          },
+          {
+            "quickReplyButton": {
+              "displayText": "Donate",
+              "id": `${prefix}donate`
+            }
+          },
+          {
+            "quickReplyButton": {
+              "displayText": "Script",
+              "id": `${prefix}sc`,
+            }
+          },
+          {
+            "quickReplyButton": {
+              "displayText": "Owner",
+              "id": `${prefix}owner`
+            }
+          }
+        ]
+      }
+    }
                }), { userJid: m.chat })
                 hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
 
