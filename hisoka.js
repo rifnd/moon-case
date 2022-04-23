@@ -2869,7 +2869,7 @@ LIBRAY:  *BAILEYS MD*`, "Lol", "List Bor ", sectionnya, { quoted: m})
 
 break
             case 'menu': case 'help': {
-                buffer = await getBuffer(`https://telegra.ph/file/2939f98df8e322970d8ba.jpg`)
+                buffer = await getBuffer(`https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`)
                 anu = `
 ┌───「 *ZETS - MD* 」───⭓                
 ├⭓ *( ℹ️ ) Information* ┈ ⳹
