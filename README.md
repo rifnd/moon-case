@@ -1,4 +1,4 @@
-# ZetsM
+# Zetspublic
 Script WhatsApp Bot Multi Device, Ori Hisoka-Morou
 
 ## NOTE
@@ -24,8 +24,8 @@ WhatsApp Bot Multi Device [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdn
 
 
 ```bash
-git clone https://github.com/Nando35/ZetsM
-cd ZetsM
+git clone https://github.com/Nando35/Zetspublic
+cd Zetspublic
 npm install
 ```
 
@@ -45,8 +45,8 @@ apt update && apt upgrade
 apt install git -y
 apt install nodejs -y
 apt install ffmpeg -y
-git clone https://github.com/Nando35/ZetsM
-cd ZetsM
+git clone https://github.com/Nando35/Zetspublic
+cd Zetspublic
 npm install
 ```
 
