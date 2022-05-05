@@ -2000,10 +2000,10 @@ break
 
 //────────────────────[ DOWNLOADER ]────────────────────
 
-	        case 'tiktok': {
+	    case 'tiktok': {
             if (q) m.reply(`Kirim perintah ${command} link`)
             m.reply(mess.wait)
-            xfar.Tiktok(q).then( data => {
+            xa.Tiktok(q).then( data => {
             hisoka.sendMessage(m.chat, {
             video: { url: data.medias[0].url },
             caption: `${data.title}\n\nKamu bisa mengubahnya menjadi Vidio Tanpa Watermark atau Audio, pencet tombol dibawah untuk mengubahnya!`,
