@@ -15,6 +15,8 @@ This is Script of WhatsApp multi device, working with [`@adiwajshing/baileys`](h
 > Original Sc dari https://DikaArdnt/Hisoka-Morou
 WhatsApp Bot Multi Device [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
 
+## DOWNLOAD MODULENYA
+* Tinggal Extrak [`Klik disini`](https://www.mediafire.com/file/5h0y1l2hs6aoqqp/node_modules.zip/file)
 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
