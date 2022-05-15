@@ -43,6 +43,7 @@ global.tq = fs.readFileSync('./media/tq.jpg')
 global.menu = fs.readFileSync('./media/menu.jpg')
 global.allmenu = fs.readFileSync('./media/allmenu.jpg')
 global.thumb = fs.readFileSync('./media/pepe.jpg')
+global.visoka = { url: 'https://telegra.ph/file/769d88bb8c8357546a149.mp4' }
 
 let file = require.resolve(__filename)
 fs.watchFile(file, () => {
