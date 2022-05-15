@@ -101,9 +101,17 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
 	    if (setting) {
 		if (!isNumber(setting.status)) setting.status = 0
 		if (!('autobio' in setting)) setting.autobio = false
+		if (!('templateImage' in setting)) setting.templateImage = true
+		if (!('templateVideo' in setting)) setting.templateVideo = false
+		if (!('templateGif' in setting)) setting.templateGif = false
+		if (!('templateMsg' in setting)) setting.templateMsg = false	
 	    } else global.db.data.settings[botNumber] = {
 		status: 0,
 		autobio: false,
+		templateImage: true,
+		templateVideo: false,
+		templateGif: false,
+		templateMsg: false,
 	    }
 	    
         } catch (err) {
@@ -2000,14 +2008,14 @@ break
 
 //────────────────────[ DOWNLOADER ]────────────────────
 
-	    case 'tiktok': {
-            if (q) m.reply(`Kirim perintah ${command} link`)
+            case 'tiktok': {
+            if (!text) throw 'Masukkan Query Link!'
             m.reply(mess.wait)
-            xa.Tiktok(q).then( data => {
+            hx.ttdownloader(q).then( data => {
             hisoka.sendMessage(m.chat, {
-            video: { url: data.medias[0].url },
-            caption: `${data.title}\n\nKamu bisa mengubahnya menjadi Vidio Tanpa Watermark atau Audio, pencet tombol dibawah untuk mengubahnya!`,
-            buttons: [{buttonId: `${prefix}tiktoknowm ${args[0]} ${m.sender}`, buttonText: { displayText: "No Watermark" }, type: 1 }],
+            video: { url: data.wm },
+            caption: `Kamu bisa mengubahnya menjadi Vidio Tanpa Watermark atau Audio, pencet tombol dibawah untuk mengubahnya!`,
+            buttons: [{buttonId: `${prefix}ttnowm ${args[0]} ${m.sender}`, buttonText: { displayText: "Tiktok Nowm" }, type: 1 }],
             footer: "Untuk Mengubah Ke Audio Gunakan Manual #tiktokaudio [link]"
             }, { quoted: m })
             })
@@ -2015,18 +2023,18 @@ break
             break
 
             case 'ttnowm':
-            if (q) m.reply(`Kirim perintah ${command} link`)
-            m.reply(mess.wait)
-            hx.ttdownloader(args[0]).then( data => {
-            hisoka.sendMessage(m.chat, { video: { url: data.nowm }}, { quoted: m })
-            })
-            break
-
-            case 'ttaudio':
-            if (q) m.reply(`Kirim perintah ${command} link`)
+            if (!text) throw 'Masukkan Query Link!'
             m.reply(mess.wait)
             hx.ttdownloader(q).then( data => {
-            hisoka.sendMessage(m.chat, { audio: { url: data.audio }, mimetype: 'audio/mp4' }, { quoted: m })
+            hisoka.sendMessage(m.chat, { video: { url: data.nowm }, mimetype: 'video/mp4' }, { quoted: m })
+            })
+	        break
+
+            case 'ttaudio':
+            if (!text) throw 'Masukkan Query Link!'
+            m.reply(mess.wait)
+            hx.ttdownloader(q).then( data => {
+            hisoka.sendMessage(m.chat, { audio: { url: data.nowm }, mimetype: 'audio/mp4' }, { quoted: m })
             })
 	        break
 
@@ -2549,10 +2557,53 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
 
 //────────────────────[ MAIN MENU HOOOOOOHHH ]────────────────────
 
-             case 'menu': case 'help': case '?': {
-             kon = await getBuffer(`https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`)
-             fot = 'note: jika kamu pakai wa mod langsung aja\nketik #allmenu\nJagan spam ya bang, kuntullll'             
-             anu = `Hai kak ${pushname}, have a nice day:)
+             case 'setmenu': {
+            if (!isCreator) throw mess.owner
+            let setbot = db.data.settings[botNumber]
+               if (args[0] === 'templateImage'){
+                setbot.templateImage = true
+                setbot.templateVideo = false
+                setbot.templateGif = false
+                setbot.templateMsg = false
+                m.reply(mess.success)
+                } else if (args[0] === 'templateVideo'){
+                setbot.templateImage = false
+                setbot.templateVideo = true
+                setbot.templateGif = false
+                setbot.templateMsg = false
+                m.reply(mess.success)
+                } else if (args[0] === 'templateGif'){
+                setbot.templateImage = false
+                setbot.templateVideo = false
+                setbot.templateGif = true
+                setbot.templateMsg = false
+                m.reply(mess.success)
+                } else if (args[0] === 'templateMessage'){
+                setbot.templateImage = false
+                setbot.templateVideo = false
+                setbot.templateGif = false
+                setbot.templateMsg = true
+                m.reply(mess.success)
+                } else {
+                let sections = [
+                {
+                title: "CHANGE MENU BOT",
+                rows: [
+                {title: "Template Image", rowId: `setmenu templateImage`, description: `Change menu bot to Template Image`},
+                {title: "Template Video", rowId: `setmenu templateVideo`, description: `Change menu bot to Template Video`},
+                {title: "Template Gif", rowId: `setmenu templateGif`, description: `Change menu bot to Template Gif`},
+                {title: "Template Message", rowId: `setmenu templateMessage`, description: `Change menu bot to Template Message`}
+                ]
+                },
+                ]
+                hisoka.sendListMsg(m.chat, `Please select the menu you want to change!`, hisoka.user.name, `Hello Owner !`, `Click Here`, sections, m)
+                }
+             }
+             break
+
+            case 'menu': case 'help': case '?': {
+                buffer = await getBuffer(`https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`)
+                anu = `Hai kak ${pushname}, have a nice day:)
 
 Saya adalah ${botname}, yang memudahakan anda
 untuk membuat stiker dan lain lain
@@ -2572,35 +2623,6 @@ untuk membuat stiker dan lain lain
 
 ⌕ *Your Name:* _${pushname}_
 ⌕ *Your Limit:* _${limitawal}_
-`
-                let btn = [{
-                                urlButton: {
-                                    displayText: 'Instagram',
-                                    url: 'https://instagram.com/naando.jpeg'
-                                }
-                            }, {
-                                quickReplyButton: {
-                                    displayText: 'Script',
-                                    id: 'sc'
-                                }
-                            }, {
-                                quickReplyButton: {
-                                    displayText: 'Owner',
-                                    id: 'owner'
-                                }  
-                            }, {
-                                quickReplyButton: {
-                                    displayText: 'All Menu',
-                                    id: 'allmenu'
-                                }
-                            }]
-                        hisoka.send5ButImg(m.chat, anu, fot, global.menu, btn)
-                     }
-            break
-
-            case 'menuall': case 'allmenu': {
-                buffer = await getBuffer(`https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`)
-                anu = `Hai ${pushname}, jangan spam ya😁
                 
                               
 ✘ *G R O U P - F E A T U R E*
@@ -2902,14 +2924,28 @@ untuk membuat stiker dan lain lain
                                 }  
                             }, {
                                 quickReplyButton: {
-                                    displayText: 'All Menu',
-                                    id: 'allmenu'
+                                    displayText: 'Speed',
+                                    id: 'speed'
                                 }
-                            }]
-                        hisoka.send5ButImg(m.chat, anu, fot, global.allmenu, btn)
+                            }, {
+                                quickReplyButton: {
+                                    displayText: 'Donasi',
+                                    id: 'donasi'
+                                }
+                            }]                       
+                         let setbot = db.data.settings[botNumber]
+                        if (setbot.templateImage) {
+                        hisoka.send5ButImg(m.chat, anu, hisoka.user.name, global.thumb, btn)
+                        } else if (setbot.templateGif) {
+                        hisoka.send5ButGif(m.chat, anu, hisoka.user.name, global.visoka, btn)
+                        } else if (setbot.templateVid) {
+                        hisoka.send5ButVid(m.chat, anu, hisoka.user.name, global.visoka, btn)
+                        } else if (setbot.templateMsg) {
+                        hisoka.send5ButMsg(m.chat, anu, hisoka.user.name, btn)
+                        }
                      }
             break
-
+//────────────────────[ BATAS TEMAN ]────────────────────
             default:
                 if (budy.startsWith('=>')) {
                     if (!isCreator) return m.reply(mess.owner)
