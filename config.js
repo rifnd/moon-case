@@ -12,12 +12,12 @@ global.APIKeys = {
 }
 
 // Other
-global.owner = ['6281252848955']
+global.owner = ['6285785694474']
 global.premium = ['0']
-global.ownername = 'Zetaa'
-global.botname = 'Zets Public'
-global.packname = '© ZETS - MULTI DEVICE'
-global.gc = 'https://bit.ly/3KMlmv2'
+global.ownername = 'Jaka'
+global.botname = 'Mr,Bean botz'
+global.packname = '© Mr,Bean - MULTI DEVICE'
+global.gc = 'https://chat.whatsapp.com/ED7th5Ie38eBayZEbDPxwY'
 global.limitawal = '100'
 global.author = '@naando.jpeg\n@alya.xzy'
 global.sessionName = 'sessionya'
