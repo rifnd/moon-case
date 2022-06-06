@@ -1,19 +1,12 @@
 # Zetspublic
 Script WhatsApp Bot Multi Device, Ori Hisoka-Morou
 
-## NOTE
-This Script is for everyone, not for Sale. Jika dijual neraka menunggumu brother !
-
 <p align="center">
 	<img src="https://telegra.ph/file/fb1c7b54269534344ba7c.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
 <h1 align="center">ZetsM</h1>
 
 This is Script of WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
-
-## Infoooo
-> Original Sc dari https://DikaArdnt/Hisoka-Morou
-WhatsApp Bot Multi Device [`DikaArdnt/Hisoka-Morou`](https://github.com/DikaArdnt/Hisoka-Morou)
 
 ## DOWNLOAD MODULENYA
 * Tinggal Extrak [`Klik disini`](https://www.mediafire.com/file/5h0y1l2hs6aoqqp/node_modules.zip/file)
@@ -63,14 +56,6 @@ yarn
 ```bash
 $ node .
 ```
-
-## ❗ Warning
-WhatsApp bot is still in the development stage, so there are a few bugs
-WhatsApp Connection (BETA, not working perfectly)
-
-Editing Number Owner & session name in [`config.js`](https://github.com/DikaArdnt/Hisoka-Morou/blob/master/config.js)
-Get Apikey zenz on [`zenz`](https://zenzapi.xyz/pricing)
-
 
 ## Thanks To
 * [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
