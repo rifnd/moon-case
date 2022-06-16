@@ -14,6 +14,7 @@ const path = require('path')
 const os = require('os')
 const hx = require('hxz-api')
 const xa = require('xfarr-api')
+const { facebook, facebook2 } = require('./lib/scrapedl.js')
 const moment = require('moment-timezone')
 const { JSDOM } = require('jsdom')
 const speed = require('performance-now')
@@ -117,7 +118,28 @@ module.exports = zets = async (zets, m, chatUpdate, store) => {
         } catch (err) {
             console.error(err)
         }
-	    
+	
+          //itung mundor fax
+           const hariRaya = new Date('6 1, 2022 00:00:00')
+			const sekarang = new Date().getTime();
+			const Selisih = hariRaya - sekarang;
+			const jhari = Math.floor( Selisih / (1000 * 60 * 60 * 24));
+			const jjam = Math.floor( Selisih % (1000 * 60 * 60 * 24) / (1000 * 60 * 60))
+			const mmmenit = Math.floor( Selisih % (1000 * 60 * 60) / (1000 * 60));
+			const ddetik = Math.floor( Selisih % (1000 * 60) / 1000);
+			const ultah = `${jhari}Hari ${jjam}Jam ${mmmenit}Menit ${ddetik}Detik`
+			
+         async function hitungmundur(bulan, tanggal) { //By Fax Ngk Usah Di Ubah
+          let from = new Date(`${bulan} ${tanggal}, 2022 00:00:00`).getTime();
+          let now = Date.now();
+          let distance = from - now;
+          let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          return days + "Hari " + hours + "Jam " + minutes + "Menit " + seconds + "Detik"
+         }    
+  
         // Public & Self
         if (!zets.public) {
             if (!m.key.fromMe) return
@@ -128,6 +150,20 @@ module.exports = zets = async (zets, m, chatUpdate, store) => {
             zets.sendReadReceipt(m.chat, m.sender, [m.key.id])
             console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
         }
+	
+	    	// write database every 1 minute
+setInterval(() => {
+fs.writeFileSync('./src/database.json', JSON.stringify(global.db, null, 2))
+}, 60 * 1000)
+	
+	//Add Hit Fax
+global.hit = {}
+if (isCmd) {
+data = await fetchJson('https://api.countapi.xyz/hit/FaxBot/visits')
+jumlahcmd = `${data.value}`
+dataa = await fetchJson(`https://api.countapi.xyz/hit/FaxBot${moment.tz('Asia/Jakarta').format('DDMMYYYY')}/visits`)
+jumlahharian = `${dataa.value}`
+}
 	
 	// reset limit every 12 hours
         let cron = require('node-cron')
