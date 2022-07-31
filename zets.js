@@ -1,6 +1,6 @@
 /**
    * Create By Dika Ardnt
-   * Follow https://github.com/DikaArdnt
+   * Follow ig saya @naando.io
 */
 
 require('./config')
