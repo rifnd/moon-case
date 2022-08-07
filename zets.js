@@ -17,6 +17,7 @@ const xa = require('xfarr-api')
 const { facebook, facebook2 } = require('./lib/scrapedl.js')
 const moment = require('moment-timezone')
 const { JSDOM } = require('jsdom')
+const Jimp = require('jimp')
 const speed = require('performance-now')
 const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
@@ -24,7 +25,9 @@ const primbon = new Primbon()
 const { smsg, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, format, parseMention, getRandom } = require('./lib/myfunc')
 
 //Apikey
-const setting = JSON.parse(fs.readFileSync('./apikey.json'))
+let _cmd = JSON.parse(fs.readFileSync('./database/command.json'));
+let _cmdUser = JSON.parse(fs.readFileSync('./database/commandUser.json'));
+let setting = JSON.parse(fs.readFileSync('./apikey.json'))
 
 //limit
 limitawal = '100'
@@ -57,6 +60,7 @@ module.exports = zets = async (zets, m, chatUpdate, store) => {
         const isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const itsMe = m.sender == botNumber ? true : false
         const text = q = args.join(" ")
+        const sender = m.sender
         const quoted = m.quoted ? m.quoted : m
         const mime = (quoted.msg || quoted).mimetype || ''
 	    const isMedia = /image|video|sticker|audio/.test(mime)
@@ -151,6 +155,13 @@ module.exports = zets = async (zets, m, chatUpdate, store) => {
             console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
         }
 	
+	const reSize = async(buffer, ukur1, ukur2) => {
+    return new Promise(async(resolve, reject) => {
+        var baper = await Jimp.read(buffer);
+        var ab = await baper.resize(ukur1, ukur2).getBufferAsync(Jimp.MIME_JPEG)
+        resolve(ab)
+    })
+}
 	    	// write database every 1 minute
 setInterval(() => {
 fs.writeFileSync('./src/database.json', JSON.stringify(global.db, null, 2))
@@ -164,7 +175,67 @@ jumlahcmd = `${data.value}`
 dataa = await fetchJson(`https://api.countapi.xyz/hit/FaxBot${moment.tz('Asia/Jakarta').format('DDMMYYYY')}/visits`)
 jumlahharian = `${dataa.value}`
 }
-	
+
+	async function addCountCmd(nama, sender, _db) {
+         addCountCmdUser(nama, sender, _cmdUser)
+          var posi = null
+            Object.keys(_db).forEach((i) => {
+               if (_db[i].nama === nama) {
+                 posi = i
+               }
+            })
+            if (posi === null) {
+              _db.push({nama: nama, count: 1})
+              fs.writeFileSync('./database/command.json',JSON.stringify(_db, null, 2));
+            } else {
+            _db[posi].count += 1
+            fs.writeFileSync('./database/command.json',JSON.stringify(_db, null, 2));
+          }
+        }
+        
+        async function addCountCmdUser(nama, sender, u) {
+         var posi = null
+         var pos = null
+         Object.keys(u).forEach((i) => {
+            if (u[i].jid === sender) {
+               posi = i
+            }
+          })
+         if (posi === null) {
+            u.push({jid: sender, db: [{nama: nama, count: 0}]})
+            fs.writeFileSync('./database/commandUser.json', JSON.stringify(u, null, 2));
+          Object.keys(u).forEach((i) => {
+             if (u[i].jid === sender) {
+               posi = i
+             }
+          })
+         }
+         if (posi !== null) {
+         Object.keys(u[posi].db).forEach((i) => {
+            if (u[posi].db[i].nama === nama) {
+               pos = i
+            }
+          })
+         if (pos === null) {
+           u[posi].db.push({nama: nama, count: 1})
+           fs.writeFileSync('./database/commandUser.json', JSON.stringify(u, null, 2));
+          } else {
+           u[posi].db[pos].count += 1
+           fs.writeFileSync('./database/commandUser.json', JSON.stringify(u, null, 2));
+          }
+         }
+        }
+
+        async function getPosiCmdUser(sender, _db) {
+         var posi = null
+         Object.keys(_db).forEach((i) => {
+          if (_db[i].jid === sender) {
+             posi = i
+          }
+         })
+          return posi
+        }
+        
 	// reset limit every 12 hours
         let cron = require('node-cron')
         cron.schedule('00 12 * * *', () => {
@@ -595,6 +666,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             }
             break
             case 'sc':  case 'sourcecode': {
+            addCountCmd(`#${command.slice(1)}`, sender, _cmd)
 	        anu = `
 ⌕ Script : https://github.com/Nando35/ZetsM
 ⌕ Script ori : https://github.com/DikaArdnt/zets-Morou
@@ -642,6 +714,7 @@ Alya
             break
 
             case 'chat': {
+            addCountCmd(`#${command.slice(1)}`, sender, _cmd)
                 if (!isCreator) throw mess.owner
                 if (!q) throw 'Option : 1. mute\n2. unmute\n3. archive\n4. unarchive\n5. read\n6. unread\n7. delete'
                 if (args[0] === 'mute') {
@@ -1514,6 +1587,35 @@ break
         })
         }
         break
+        case 'dashboard':
+	                    addCountCmd('#dashboard', sender, _cmd)
+                            var posi = await getPosiCmdUser(sender, _cmdUser)
+                            _cmdUser[posi].db.sort((a, b) => (a.count < b.count) ? 1 : -1)
+                            _cmd.sort((a, b) => (a.count  < b.count) ? 1 : -1)
+                            var posi = await getPosiCmdUser(sender, _cmdUser)
+                            var jumlahCmd = _cmd.length
+                            if (jumlahCmd > 10) jumlahCmd = 10
+                            var jumlah = _cmdUser[posi].db.length
+                            if (jumlah > 5) jumlah = 5
+                            var totalUser = 0
+                            for (let x of _cmdUser[posi].db) {
+                              totalUser = totalUser + x.count
+                            }
+                            var total = 0
+                            for (let o of _cmd) {
+                              total = total + o.count
+                            }
+                            var teks = `*ZETS BOT DASHBOARD*\n\n*HIT*\n• GLOBAL : ${total}\n• USER : ${totalUser}\n\n`
+                            teks += `*Most Command Global*\n`
+                            for (let u = 0; u < jumlahCmd; u ++) {
+                              teks += `• ${_cmd[u].nama} : ${_cmd[u].count}\n`
+                            }
+                            teks += `\n*Most Command User*\n`
+                            for (let i = 0; i < jumlah; i ++) {
+                              teks += `• ${_cmdUser[posi].db[i].nama} : ${_cmdUser[posi].db[i].count}\n`
+                            }
+                            m.reply(teks)
+                            break
 case 'play': case 'ytplay': {
                 if (!text) throw `Example : ${prefix + command} story wa anime`
                 let yts = require("yt-search")
@@ -1556,6 +1658,7 @@ const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                 }
 break
 	    case 'ytmp3': case 'ytaudio': {
+	    addCountCmd(`#${command.slice(1)}`, sender, _cmd)
                 let { yta } = require('./lib/y2mate')
                 if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 128kbps`
                 let quality = args[1] ? args[1] : '128kbps'
@@ -1566,6 +1669,7 @@ break
             }
             break
             case 'ytmp4': case 'ytvideo': {
+            addCountCmd(`#${command.slice(1)}`, sender, _cmd)
                 let { ytv } = require('./lib/y2mate')
                 if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 360p`
                 let quality = args[1] ? args[1] : '360p'
@@ -2593,8 +2697,9 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
 
 //────────────────────[ MAIN MENU HOOOOOOHHH ]────────────────────
 
-case 'menu': case 'help': case '?': {                
-                buffer = await getBuffer(`https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`)
+case 'menu': case 'help': case '?': {        
+        addCountCmd(`#${command.slice(1)}`, sender, _cmd)
+                buffer = `https://telegra.ph/file/5b7dfa74a98f61347570e.jpg`
                 no = 1
                 anu = `Hai kak ${pushname}, have a nice day:)
                            
@@ -2869,8 +2974,11 @@ ${ultah}
 *${no++}* ◦ ${prefix}setppbot [image]
 *${no++}* ◦ ${prefix}setexif
 `
-const _0x1b1913=_0x19f8;function _0x19f8(_0x4886e1,_0x9e0af0){const _0x5e5b52=_0x5e5b();return _0x19f8=function(_0x19f828,_0x232121){_0x19f828=_0x19f828-0x1e2;let _0x26e71f=_0x5e5b52[_0x19f828];return _0x26e71f;},_0x19f8(_0x4886e1,_0x9e0af0);}(function(_0x4194cb,_0x3c59bd){const _0x318308=_0x19f8,_0x3f5050=_0x4194cb();while(!![]){try{const _0x154c80=parseInt(_0x318308(0x1e8))/0x1+-parseInt(_0x318308(0x1e3))/0x2*(-parseInt(_0x318308(0x1eb))/0x3)+parseInt(_0x318308(0x1e7))/0x4+parseInt(_0x318308(0x1e5))/0x5+parseInt(_0x318308(0x1ef))/0x6*(-parseInt(_0x318308(0x1f5))/0x7)+-parseInt(_0x318308(0x1f7))/0x8*(-parseInt(_0x318308(0x1f8))/0x9)+-parseInt(_0x318308(0x1f4))/0xa;if(_0x154c80===_0x3c59bd)break;else _0x3f5050['push'](_0x3f5050['shift']());}catch(_0x5d7434){_0x3f5050['push'](_0x3f5050['shift']());}}}(_0x5e5b,0xefa18));function _0x5e5b(){const _0x428dfa=['1260350LSfxUo','chat','donasi','15pvZzbt','linkgc','sender','sendMessage','3726VpmsPu','https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx','Contact\x20Owner','Donasi','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','39959840CyJMvf','10052Rmrvsp','Youtube\x20Creator','13912xRQiBr','6219CaIMpl','Group\x20Forum','650710qCXDOb','botname','4168235IQplGg','owner','3787388gSqAlZ'];_0x5e5b=function(){return _0x428dfa;};return _0x5e5b();}let butRun=[{'urlButton':{'displayText':_0x1b1913(0x1e2),'url':''+global[_0x1b1913(0x1ec)]}},{'urlButton':{'displayText':_0x1b1913(0x1f6),'url':''+global['linkyt']}},{'quickReplyButton':{'displayText':_0x1b1913(0x1f1),'id':_0x1b1913(0x1e6)}},{'quickReplyButton':{'displayText':_0x1b1913(0x1f2),'id':_0x1b1913(0x1ea)}}];zets[_0x1b1913(0x1ee)](m[_0x1b1913(0x1e9)],{'caption':anu,'document':{'url':_0x1b1913(0x1f0)},'mimetype':_0x1b1913(0x1f3),'jpegThumbnail':buffer,'fileName':''+botname,'templateButtons':butRun,'footer':''+global[_0x1b1913(0x1e4)],'mentionedJid':[m[_0x1b1913(0x1ed)]]});
-                     }
+var button = [{ buttonId: `dashboard`, buttonText: { displayText: `Dashboard` }, type: 1 },
+{ buttonId: `owner`, buttonText: { displayText: `Owner` }, type: 1 }]
+zets.sendMessage(m.chat, { caption: `${anu}`, location: { jpegThumbnail: await reSize(buffer, 200, 200) }, buttons: button, footer: '©Zetsbot', mentions: [m.sender] })
+
+                }
             break
 //────────────────────[ BATAS TEMAN ]────────────────────
             default:
