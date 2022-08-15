@@ -11,6 +11,10 @@ global.APIKeys = {
 	'https://zenzapi.xyz': 'Your Key',
 }
 
+//api
+global.xteam = 'apivproject'
+global lolhuman = 'yourkey'
+
 // Other
 global.owner = ['6281252848955']
 global.premium = ['0']
