@@ -31,8 +31,8 @@ let setting = JSON.parse(fs.readFileSync('./apikey.json'))
 
 //limit
 limitawal = '100'
-botname = 'ZETS - MD'
-wm = '© ZETS - MD'
+botname = 'NEO - MD'
+wm = '© NEO - MD'
 
 // read database
 let tebaklagu = db.data.game.tebaklagu = []
@@ -662,7 +662,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             }
             break
 	    case 'donasi': case 'sewabot': case 'sewa': case 'buypremium': case 'donate': {
-                zets.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/f8d35118f27c5b371da2b.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⌕ 15k Per Group via E-Walet 1 Month\n⌕ 20k via pulsa 1 Month\n\n Premium Price Bot\n⌕ 10k per User 1 bulan\n\nPayment can be via Paypal/link aja/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6281252848955 (Owner)\n\nDonate For Me : \n\n⌕ Paypal : https://www.paypal.me/Rifando35\n⌕ Saweria : https://saweria.co/Nando35` }, { quoted: m })
+                zets.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/f8d35118f27c5b371da2b.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⌕ 15k Per Group via E-Walet 1 Month\n⌕ 20k via pulsa 1 Month\n\n Premium Price Bot\n⌕ 10k per User 1 bulan\n\nPayment can be via Dana/shopee/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6285600380823 (Owner)\n\nDonate For Me : \n\n⌕ Pulsa : 085600380823\n⌕ Sociabuzz : https://sociabuzz.com/ezinter/support` }, { quoted: m })
             }
             break
             case 'sc':  case 'sourcecode': {
@@ -672,9 +672,9 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 ⌕ Script ori : https://github.com/DikaArdnt/zets-Morou
 
 Jangan lupa kasih bintang.
-⌕ Donate : 628125284895 (Dana / gopay)
-⌕ Saweria : https://saweria.co/Nando35
-⌕ Paypal : https://www.paypal.me/Rifando35
+⌕ Donate : 6285600380823 (Dana / gopay)
+⌕ Sociabuzz : https://sociabuzz.com/ezinter/support
+⌕ Paypal : -
 
 Dont Forget Donate
 `
@@ -1831,7 +1831,7 @@ break
 //────────────────────[ PRIMBON ]────────────────────
 
 	    case 'nomerhoki': case 'nomorhoki': {
-                if (!Number(text)) throw `Example : ${prefix + command} 6288292024190`
+                if (!Number(text)) throw `Example : ${prefix + command} 6285600380823`
                 let anu = await primbon.nomer_hoki(Number(text))
                 if (anu.status == false) return m.reply(anu.message)
                 zets.sendText(m.chat, `⌕ *Nomor HP :* ${anu.message.nomer_hp}\n⌕ *Angka Shuzi :* ${anu.message.angka_shuzi}\n⌕ *Energi Positif :*\n- Kekayaan : ${anu.message.energi_positif.kekayaan}\n- Kesehatan : ${anu.message.energi_positif.kesehatan}\n- Cinta : ${anu.message.energi_positif.cinta}\n- Kestabilan : ${anu.message.energi_positif.kestabilan}\n- Persentase : ${anu.message.energi_positif.persentase}\n⌕ *Energi Negatif :*\n- Perselisihan : ${anu.message.energi_negatif.perselisihan}\n- Kehilangan : ${anu.message.energi_negatif.kehilangan}\n- Malapetaka : ${anu.message.energi_negatif.malapetaka}\n- Kehancuran : ${anu.message.energi_negatif.kehancuran}\n- Persentase : ${anu.message.energi_negatif.persentase}`, m)
