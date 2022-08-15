@@ -37,7 +37,14 @@ global.db = new Low(
       new mongoDB(opts['db']) :
       new JSONFile(`src/database.json`)
 )
-global.db.data = {
+global.DATABASE = global.db // Backwards Compatibility
+global.loadDatabase = async function loadDatabase() {
+  if (global.db.READ) return new Promise((resolve) => setInterval(function () { (!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null) }, 1 * 1000))
+  if (global.db.data !== null) return
+  global.db.READ = true
+  await global.db.read()
+  global.db.READ = false
+  global.db.data = {
     users: {},
     chats: {},
     database: {},
@@ -45,8 +52,12 @@ global.db.data = {
     settings: {},
     others: {},
     sticker: {},
+    anonymous: {},
     ...(global.db.data || {})
+  }
+  global.db.chain = _.chain(global.db.data)
 }
+loadDatabase()
 
 // save database every 30seconds
 if (global.db) setInterval(async () => {
@@ -63,18 +74,25 @@ async function startzets() {
 
     store.bind(zets.ev)
     
-    // anticall auto block
-    zets.ws.on('CB:call', async (json) => {
-    const callerId = json.content[0].attrs['call-creator']
-    if (json.content[0].tag == 'offer') {
-    let pa7rick = await zets.sendContact(callerId, global.owner)
-    zets.sendMessage(callerId, { text: `Sistem otomatis block!\nJangan menelpon bot!\nSilahkan Hubungi Owner Untuk Dibuka !`}, { quoted : pa7rick })
+    // Anti Call
+    zets.ev.on('call', async (fatihh) => {
+    let botNumber = await zets.decodeJid(zets.user.id)
+    let ciko = db.data.settings[botNumber].anticall
+    if (!ciko) return
+    console.log(fatihh)
+    for (let tihh of fatihh) {
+    if (tihh.isGroup == false) {
+    if (tihh.status == "offer") {
+    let pa7rick = await zets.sendTextWithMentions(tihh.from, `*${zets.user.name}* tidak bisa menerima panggilan ${tihh.isVideo ? `video` : `suara`}. Maaf @${tihh.from.split('@')[0]} kamu akan diblockir. Jika tidak sengaja silahkan hubungi Owner untuk dibuka !`)
+    zets.sendContact(tihh.from, global.owner, pa7rick)
     await sleep(8000)
-    await zets.updateBlockStatus(callerId, "block")
+    await zets.updateBlockStatus(tihh.from, "block")
+    }
+    }
     }
     })
 
-    zets.ev.on('messages.upsert', async chatUpdate => {
+zets.ev.on('messages.upsert', async chatUpdate => {
         //console.log(JSON.stringify(chatUpdate, undefined, 2))
         try {
         mek = chatUpdate.messages[0]
@@ -83,6 +101,7 @@ async function startzets() {
         if (mek.key && mek.key.remoteJid === 'status@broadcast') return
         if (!zets.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
         if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
+        if (mek.key.id.startsWith('FatihArridho_')) return
         m = smsg(zets, mek, store)
         require("./zets")(zets, m, chatUpdate, store)
         } catch (err) {
@@ -92,25 +111,31 @@ async function startzets() {
     
     // Group Update
     zets.ev.on('groups.update', async pea => {
-       //console.log(pea)
+    //console.log(pea)
+    try {
+    for(let ciko of pea) {
     // Get Profile Picture Group
        try {
-       ppgc = await zets.profilePictureUrl(pea[0].id, 'image')
+       ppgc = await zets.profilePictureUrl(ciko.id, 'image')
        } catch {
-       ppgc = 'https://shortlink.zetsarridho.my.id/rg1oT'
+       ppgc = 'https://tinyurl.com/yx93l6da'
        }
        let wm_fatih = { url : ppgc }
-       if (pea[0].announce == true) {
-       zets.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nGroup telah ditutup oleh admin, Sekarang hanya admin yang dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
-       } else if(pea[0].announce == false) {
-       zets.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nGroup telah dibuka oleh admin, Sekarang peserta dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
-       } else if (pea[0].restrict == true) {
-       zets.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nInfo group telah dibatasi, Sekarang hanya admin yang dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
-       } else if (pea[0].restrict == false) {
-       zets.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nInfo group telah dibuka, Sekarang peserta dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
+       if (ciko.announce == true) {
+       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah ditutup oleh admin, Sekarang hanya admin yang dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
+       } else if (ciko.announce == false) {
+       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah dibuka oleh admin, Sekarang peserta dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
+       } else if (ciko.restrict == true) {
+       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibatasi, Sekarang hanya admin yang dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
+       } else if (ciko.restrict == false) {
+       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibuka, Sekarang peserta dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
        } else {
-       zets.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nGroup Subject telah diganti menjadi *${pea[0].subject}*`, `Group Settings Change Message`, wm_fatih, [])
+       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup Subject telah diganti menjadi *${ciko.subject}*`, `Group Settings Change Message`, wm_fatih, [])
      }
+    }
+    } catch (err){
+    console.log(err)
+    }
     })
 
     zets.ev.on('group-participants.update', async (anu) => {
@@ -123,21 +148,25 @@ async function startzets() {
                 try {
                     ppuser = await zets.profilePictureUrl(num, 'image')
                 } catch {
-                    ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+                    ppuser = 'https://tinyurl.com/yx93l6da'
                 }
 
                 // Get Profile Picture Group
                 try {
                     ppgroup = await zets.profilePictureUrl(anu.id, 'image')
                 } catch {
-                    ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+                    ppgroup = 'https://tinyurl.com/yx93l6da'
                 }
 
                 if (anu.action == 'add') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
+                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
                 } else if (anu.action == 'remove') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
-                }
+                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
+                } else if (anu.action == 'promote') {
+                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Promote From ${metadata.subject}` })
+                } else if (anu.action == 'demote') {
+                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Demote From ${metadata.subject}` })
+              }
             }
         } catch (err) {
             console.log(err)
@@ -221,6 +250,7 @@ async function startzets() {
             else if (reason === DisconnectReason.loggedOut) { console.log(`Device Logged Out, Please Scan Again And Run.`); zets.logout(); }
             else if (reason === DisconnectReason.restartRequired) { console.log("Restart Required, Restarting..."); startzets(); }
             else if (reason === DisconnectReason.timedOut) { console.log("Connection TimedOut, Reconnecting..."); startzets(); }
+            else if (reason === DisconnectReason.Multidevicemismatch) { console.log("Multi device mismatch, please scan again"); zets.logout(); }
             else zets.end(`Unknown DisconnectReason: ${reason}|${connection}`)
         }
         console.log('Connected...', update)
@@ -228,8 +258,51 @@ async function startzets() {
 
     zets.ev.on('creds.update', saveState)
 
+    /** Resize Image
+      *
+      * @param {Buffer} Buffer (Only Image)
+      * @param {Numeric} Width
+      * @param {Numeric} Height
+      */
+      zets.reSize = async (image, width, height) => {
+       let jimp = require('jimp')
+       var oyy = await jimp.read(image);
+       var kiyomasa = await oyy.resize(width, height).getBufferAsync(jimp.MIME_JPEG)
+       return kiyomasa
+      }
     // Add Other
-    /** Send List Messaage
+
+          /**
+      *
+      * @param {*} jid
+      * @param {*} url
+      * @param {*} caption
+      * @param {*} quoted
+      * @param {*} options
+      */
+     zets.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
+      let mime = '';
+      let res = await axios.head(url)
+      mime = res.headers['content-type']
+      if (mime.split("/")[1] === "gif") {
+     return zets.sendMessage(jid, { video: await getBuffer(url), caption: caption, gifPlayback: true, ...options}, { quoted: quoted, ...options})
+      }
+      let type = mime.split("/")[0]+"Message"
+      if(mime === "application/pdf"){
+     return zets.sendMessage(jid, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, ...options}, { quoted: quoted, ...options })
+      }
+      if(mime.split("/")[0] === "image"){
+     return zets.sendMessage(jid, { image: await getBuffer(url), caption: caption, ...options}, { quoted: quoted, ...options})
+      }
+      if(mime.split("/")[0] === "video"){
+     return zets.sendMessage(jid, { video: await getBuffer(url), caption: caption, mimetype: 'video/mp4', ...options}, { quoted: quoted, ...options })
+      }
+      if(mime.split("/")[0] === "audio"){
+     return zets.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options}, { quoted: quoted, ...options })
+      }
+      }
+
+      /** Send List Messaage
       *
       *@param {*} jid
       *@param {*} text
@@ -250,6 +323,20 @@ async function startzets() {
         }
         zets.sendMessage(jid, listMes, { quoted: quoted })
         }
+        
+        /** Send Button 5 Location
+       *
+       * @param {*} jid
+       * @param {*} text
+       * @param {*} footer
+       * @param {*} location
+       * @param [*] button
+       * @param {*} options
+       */
+      zets.send5ButLoc = async (jid , text = '' , footer = '', lok, but = [], options = {}) =>{
+      let bb = await zets.reSize(lok, 300, 300)
+      zets.sendMessage(jid, { location: { jpegThumbnail: bb }, caption: text, footer: footer, templateButtons: but, ...options })
+      }
 
     /** Send Button 5 Message
      * 
@@ -269,7 +356,7 @@ async function startzets() {
         zets.sendMessage(jid, templateMessage)
         }
 
-    /** Send Button 5 Image
+/** Send Button 5 Image
      *
      * @param {*} jid
      * @param {*} text
@@ -279,22 +366,11 @@ async function startzets() {
      * @param {*} options
      * @returns
      */
-    zets.send5ButImg = async (jid , text = '' , footer = '', img, but = [], options = {}) =>{
-        let message = await prepareWAMessageMedia({ image: img }, { upload: zets.waUploadToServer })
-        var template = generateWAMessageFromContent(jid, proto.Message.fromObject({
-        templateMessage: {
-        hydratedTemplate: {
-        imageMessage: message.imageMessage,
-               "hydratedContentText": text,
-               "hydratedFooterText": footer,
-               "hydratedButtons": but
-            }
-            }
-            }), options)
-            zets.relayMessage(jid, template.message, { messageId: template.key.id })
+    zets.send5ButImg = async (jid , text = '' , footer = '', img, but = [], buff, options = {}) =>{
+    zets.sendMessage(jid, { image: img, caption: text, footer: footer, templateButtons: but, ...options })
     }
 
-    /** Send Button 5 Video
+/** Send Button 5 Video
      *
      * @param {*} jid
      * @param {*} text
@@ -304,22 +380,12 @@ async function startzets() {
      * @param {*} options
      * @returns
      */
-    zets.send5ButVid = async (jid , text = '' , footer = '', vid, but = [], options = {}) =>{
-        let message = await prepareWAMessageMedia({ video: vid }, { upload: zets.waUploadToServer })
-        var template = generateWAMessageFromContent(jid, proto.Message.fromObject({
-        templateMessage: {
-        hydratedTemplate: {
-        videoMessage: message.videoMessage,
-               "hydratedContentText": text,
-               "hydratedFooterText": footer,
-               "hydratedButtons": but
-            }
-            }
-            }), options)
-            zets.relayMessage(jid, template.message, { messageId: template.key.id })
+    zets.send5ButVid = async (jid , text = '' , footer = '', vid, but = [], buff, options = {}) =>{
+    let lol = await zets.reSize(buf, 300, 300)
+    zets.sendMessage(jid, { video: vid, jpegThumbnail: lol, caption: text, footer: footer, templateButtons: but, ...options })
     }
 
-    /** Send Button 5 Gif
+/** Send Button 5 Gif
      *
      * @param {*} jid
      * @param {*} text
@@ -329,22 +395,14 @@ async function startzets() {
      * @param {*} options
      * @returns
      */
-    zets.send5ButGif = async (jid , text = '' , footer = '', gif, but = [], options = {}) =>{
-        let message = await prepareWAMessageMedia({ video: gif, gifPlayback: true }, { upload: zets.waUploadToServer })
-        var template = generateWAMessageFromContent(jid, proto.Message.fromObject({
-        templateMessage: {
-        hydratedTemplate: {
-        videoMessage: message.videoMessage,
-               "hydratedContentText": text,
-               "hydratedFooterText": footer,
-               "hydratedButtons": but
-            }
-            }
-            }), options)
-            zets.relayMessage(jid, template.message, { messageId: template.key.id })
+    zets.send5ButGif = async (jid , text = '' , footer = '', gif, but = [], buff, options = {}) =>{
+    let ahh = await zets.reSize(buf, 300, 300)
+    let a = [1,2]
+    let b = a[Math.floor(Math.random() * a.length)]
+    zets.sendMessage(jid, { video: gif, gifPlayback: true, gifAttribution: b, caption: text, footer: footer, jpegThumbnail: ahh, templateButtons: but, ...options })
     }
 
-    /**
+/**
      * 
      * @param {*} jid 
      * @param {*} buttons 
