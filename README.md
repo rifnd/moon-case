@@ -7,10 +7,7 @@ Script WhatsApp Bot Multi Device, Ori Hisoka-Morou
 <h1 align="center">ZetsM</h1>
 
 This is Script of WhatsApp multi device, working with [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
-
-## DOWNLOAD MODULENYA
-* Tinggal Extrak [`Klik disini`](https://www.mediafire.com/file/5h0y1l2hs6aoqqp/node_modules.zip/file)
-
+ 
 ## UNTUK PENGGUNA WINDOWS/RDP
 
 * Unduh & Instal Git [`Klik Disini`](https://git-scm.com/downloads)
