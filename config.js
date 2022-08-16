@@ -13,7 +13,7 @@ global.APIKeys = {
 
 //api
 global.xteam = 'apivproject'
-global lolhuman = 'yourkey'
+global.lolhuman = 'yourkey'
 
 // Other
 global.owner = ['6281252848955']
