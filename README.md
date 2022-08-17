@@ -4,11 +4,15 @@
 <h1 align="center">Zets</h1>
  
 
-## UNTUK PENGGUNA WINDOWS/RDP
+## Untuk RDP/Windows
 
-* Unduh & Instal Git [`Klik Disini`](https://git-scm.com/downloads)
-* Unduh & Instal NodeJS [`Klik Disini`](https://nodejs.org/en/download)
-* Unduh & Instal FFmpeg [`Klik Disini`](https://ffmpeg.org/download.html) (**Jangan Lupa Tambahkan FFmpeg ke variabel lingkungan PATH**)
+> Unduh & Instal Git [`Klik Disini`](https://git-scm.com/downloads)
+
+> Unduh & Instal NodeJS [`Klik Disini`](https://nodejs.org/en/download)
+
+> Unduh & Instal FFmpeg [`Klik Disini`](https://ffmpeg.org/download.html) (**Jangan Lupa Tambahkan FFmpeg ke variabel lingkungan PATH**)
+
+</br>
 
 ```bash
 git clone https://github.com/Nando35/Zetspublic
