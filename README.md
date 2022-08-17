@@ -6,7 +6,19 @@
 > Simpel whatsapp bot multi device
 
 </br>
- 
+
+## Heroku Buildpack
+
+> heroku/nodejs
+
+> heroku/python
+
+> https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
+
+> https://github.com/clhuang/heroku-buildpack-webp-binaries.git
+
+</br>
+
 
 ## Untuk RDP/Windows
 
@@ -21,7 +33,9 @@
 ## Install
 
 > git clone https://github.com/Nando35/Zetspublic
+
 > cd Zetspublic
+
 > npm install
 
 </br>
