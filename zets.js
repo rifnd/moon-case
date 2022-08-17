@@ -150,10 +150,10 @@ if (!m.key.fromMe) return
 }
 
 // Push Message To Console && Auto Read
-if (m.message) {
-zets.sendReadReceipt(m.chat, m.sender, [m.key.id])
-console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
-}
+        if (m.message) {
+            zets.readMessages([m.key])
+            console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
+        }
 	
 	const reSize = async(buffer, ukur1, ukur2) => {
 return new Promise(async(resolve, reject) => {
@@ -1530,18 +1530,18 @@ case 'imagenobg': case 'removebg': case 'remove-bg': {
 	})
 	}
 	break
-	case 'yts': case 'ytsearch': {
-if (!text) throw `Example : ${prefix + command} story wa anime`
-let yts = require("yt-search")
-let search = await yts(text)
-let teks = 'YouTube Search\n\n Result From '+text+'\n\n'
-let no = 1
-for (let i of search.all) {
-teks += `⌕ No : ${no++}\n⌕ Type : ${i.type}\n⌕ Video ID : ${i.videoId}\n⌕ Title : ${i.title}\n⌕ Views : ${i.views}\n⌕ Duration : ${i.timestamp}\n⌕ Upload At : ${i.ago}\n⌕ Author : ${i.author.name}\n⌕ Url : ${i.url}\n\n─────────────────\n\n`
-}
-zets.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
-}
-break
+case 'yts': case 'ytsearch': {
+                if (!text) throw `Example : ${prefix + command} story wa anime`
+                let yts = require("yt-search")
+                let search = await yts(text)
+                let teks = 'YouTube Search\n\n Result From '+text+'\n\n'
+                let no = 1
+                for (let i of search.all) {
+                    teks += `⭔ No : ${no++}\n⭔ Type : ${i.type}\n⭔ Video ID : ${i.videoId}\n⭔ Title : ${i.title}\n⭔ Views : ${i.views}\n⭔ Duration : ${i.timestamp}\n⭔ Upload At : ${i.ago}\n⭔ Author : ${i.author.name}\n⭔ Url : ${i.url}\n\n─────────────────\n\n`
+                }
+                zets.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
+            }
+            break
 case 'google': {
 if (!text) throw `Example : ${prefix + command} fatih arridho`
 let google = require('google-it')
@@ -1607,47 +1607,35 @@ for (let i = 0; i < jumlah; i ++) {
 }
 m.reply(teks)
 break
-case 'play': case 'ytplay': {
-if (!text) throw `Example : ${prefix + command} story wa anime`
-let yts = require("yt-search")
-let search = await yts(text)
-let anu = search.videos[Math.floor(Math.random() * search.videos.length)]
-let buf = await getBuffer(anu.thumbnail)
-let caption = `*PLAYING YOUTUBE*
-
-⌕ Title : ${anu.title}
-⌕ Description : ${anu.description}
-⌕ Url : ${anu.url}
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-   templateMessage: {
-hydratedTemplate: {
-   hydratedContentText: caption,
-locationMessage: {
-jpegThumbnail: buf},
-hydratedFooterText: `${botname}`,
-hydratedButtons: [{
-urlButton: {
-displayText: 'Instagram',
-url: 'https://instagram.com/alya.xzy'
-   }
-}, {
-quickReplyButton: {
-displayText: 'Audio',
-id: `${prefix}ytmp3 ${anu.url}`
-}
-}, {
-quickReplyButton: {
-displayText: 'Video',
-id: `${prefix}ytmp4 ${anu.url}`
-}
-}]
-}
-}
-   }), { userJid: m.chat })
-zets.relayMessage(m.chat, template.message, { messageId: template.key.id })
-}
-break
+	    case 'play': case 'ytplay': {
+                if (!text) throw `Example : ${prefix + command} story wa anime`
+                let yts = require("yt-search")
+                let search = await yts(text)
+                let anu = search.videos[Math.floor(Math.random() * search.videos.length)]
+                let buttons = [
+                    {buttonId: `ytmp3 ${anu.url}`, buttonText: {displayText: '♫ Audio'}, type: 1},
+                    {buttonId: `ytmp4 ${anu.url}`, buttonText: {displayText: '► Video'}, type: 1}
+                ]
+                let buttonMessage = {
+                    image: { url: anu.thumbnail },
+                    caption: `
+⭔ Title : ${anu.title}
+⭔ Ext : Search
+⭔ ID : ${anu.videoId}
+⭔ Duration : ${anu.timestamp}
+⭔ Viewers : ${anu.views}
+⭔ Upload At : ${anu.ago}
+⭔ Author : ${anu.author.name}
+⭔ Channel : ${anu.author.url}
+⭔ Description : ${anu.description}
+⭔ Url : ${anu.url}`,
+                    footer: botname,
+                    buttons: buttons,
+                    headerType: 4
+                }
+                zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+            }
+            break
 	case 'ytmp3': case 'ytaudio': {
 	addCountCmd(`#${command.slice(1)}`, sender, _cmd)
 let { yta } = require('./lib/y2mate')
@@ -1656,7 +1644,7 @@ let quality = args[1] ? args[1] : '128kbps'
 let media = await yta(text, quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
 zets.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${isUrl(text)}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
-zets.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+zets.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
 }
 break
 case 'ytmp4': case 'ytvideo': {
@@ -1680,7 +1668,7 @@ let quality = args[1] ? args[1] : '128kbps'
 let media = await yta(urls[text - 1], quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
 zets.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${urls[text - 1]}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
-zets.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+zets.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
 }
 break
 case 'getvideo': {
