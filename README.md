@@ -29,35 +29,15 @@
 ## Menghubungkan ke database MongoDB
 
 > Create account and database in mongodb atlas [`watch here`](https://youtu.be/rPqRyYJmx2g)
+
 > when you already have a database, you just need to take mongourl
+
 > Put mongourl in Procfile `web: node . --db 'mongourl'`
+
 > Example `web: node . -- db 'Your Mongo URI'`
 
 </br>
 
-## FOR TERMUX/UBUNTU/SSH USER
-
-apt update && apt upgrade
-apt install git -y
-apt install nodejs -y
-apt install ffmpeg -y
-git clone https://github.com/Nando35/Zetspublic
-cd Zetspublic
-npm install
-
-</br>
-
-## RECOMMENDED INSTALL ON TERMUX
-
-```bash
-pkg install yarn
-yarn
-```
-
-## Installing
-```bash
-$ node .
-```
 
 ## Thanks To
 * [`@adiwajshing/baileys`](https://github.com/adiwajshing/baileys)
