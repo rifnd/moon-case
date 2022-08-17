@@ -2,6 +2,10 @@
 	<img src="https://telegra.ph/file/2a5478cc469194f5ff894.jpg">
 </p>
 <h1 align="center">Zets</h1>
+
+> Simpel whatsapp bot multi device
+
+</br>
  
 
 ## Untuk RDP/Windows
