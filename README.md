@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://telegra.ph/file/2a5478cc469194f5ff894.jpg" width="35%" style="margin-left: auto;margin-right: auto;display: block;">
+	<img src="https://telegra.ph/file/2a5478cc469194f5ff894.jpg">
 </p>
 <h1 align="center">Zets</h1>
  
