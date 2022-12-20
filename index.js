@@ -1,9 +1,5 @@
-/**
-   * Original zets-Morou Dika Ardnt.
-*/
-
 require('./config')
-const { default: zetsConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
+const { default: clientConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("baileys")
 const { state, saveState } = useSingleFileAuthState(`./${sessionName}.json`)
 const pino = require('pino')
 const { Boom } = require('@hapi/boom')
@@ -65,73 +61,73 @@ if (global.db) setInterval(async () => {
     if (global.db.data) await global.db.write()
   }, 30 * 1000)
 
-async function startzets() {
-    const zets = zetsConnect({
+async function startclient() {
+    const client = clientConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['zets Multi Device','Safari','1.0.0'],
+        browser: ['zets-bot','Safari','1.0.0'],
         auth: state
     })
 
-    store.bind(zets.ev)
+    store.bind(client.ev)
     
     // Anti Call
-    zets.ev.on('call', async (fatihh) => {
-    let botNumber = await zets.decodeJid(zets.user.id)
+    client.ev.on('call', async (fatihh) => {
+    let botNumber = await client.decodeJid(client.user.id)
     let ciko = db.data.settings[botNumber].anticall
     if (!ciko) return
     console.log(fatihh)
     for (let tihh of fatihh) {
     if (tihh.isGroup == false) {
     if (tihh.status == "offer") {
-    let pa7rick = await zets.sendTextWithMentions(tihh.from, `*${zets.user.name}* tidak bisa menerima panggilan ${tihh.isVideo ? `video` : `suara`}. Maaf @${tihh.from.split('@')[0]} kamu akan diblockir. Jika tidak sengaja silahkan hubungi Owner untuk dibuka !`)
-    zets.sendContact(tihh.from, global.owner, pa7rick)
+    let pa7rick = await client.sendTextWithMentions(tihh.from, `*${client.user.name}* tidak bisa menerima panggilan ${tihh.isVideo ? `video` : `suara`}. Maaf @${tihh.from.split('@')[0]} kamu akan diblockir. Jika tidak sengaja silahkan hubungi Owner untuk dibuka !`)
+    client.sendContact(tihh.from, global.owner, pa7rick)
     await sleep(8000)
-    await zets.updateBlockStatus(tihh.from, "block")
+    await client.updateBlockStatus(tihh.from, "block")
     }
     }
     }
     })
 
-zets.ev.on('messages.upsert', async chatUpdate => {
+        client.ev.on('messages.upsert', async chatUpdate => {
         //console.log(JSON.stringify(chatUpdate, undefined, 2))
         try {
         mek = chatUpdate.messages[0]
         if (!mek.message) return
         mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
         if (mek.key && mek.key.remoteJid === 'status@broadcast') return
-        if (!zets.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
+        if (!client.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
         if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
-        if (mek.key.id.startsWith('FatihArridho_')) return
-        m = smsg(zets, mek, store)
-        require("./zets")(zets, m, chatUpdate, store)
+        if (mek.key.id.startsWith('Zetss_')) return
+        m = smsg(client, mek, store)
+        require("./case")(client, m, chatUpdate, store)
         } catch (err) {
             console.log(err)
         }
     })
     
     // Group Update
-    zets.ev.on('groups.update', async pea => {
+    client.ev.on('groups.update', async pea => {
     //console.log(pea)
     try {
     for(let ciko of pea) {
     // Get Profile Picture Group
        try {
-       ppgc = await zets.profilePictureUrl(ciko.id, 'image')
+       ppgc = await client.profilePictureUrl(ciko.id, 'image')
        } catch {
        ppgc = 'https://tinyurl.com/yx93l6da'
        }
        let wm_fatih = { url : ppgc }
        if (ciko.announce == true) {
-       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah ditutup oleh admin, Sekarang hanya admin yang dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
+       client.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah ditutup oleh admin, Sekarang hanya admin yang dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
        } else if (ciko.announce == false) {
-       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah dibuka oleh admin, Sekarang peserta dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
+       client.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup telah dibuka oleh admin, Sekarang peserta dapat mengirim pesan !`, `Group Settings Change Message`, wm_fatih, [])
        } else if (ciko.restrict == true) {
-       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibatasi, Sekarang hanya admin yang dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
+       client.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibatasi, Sekarang hanya admin yang dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
        } else if (ciko.restrict == false) {
-       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibuka, Sekarang peserta dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
+       client.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nInfo group telah dibuka, Sekarang peserta dapat mengedit info group !`, `Group Settings Change Message`, wm_fatih, [])
        } else {
-       zets.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup Subject telah diganti menjadi *${ciko.subject}*`, `Group Settings Change Message`, wm_fatih, [])
+       client.send5ButImg(ciko.id, `「 Group Settings Change 」\n\nGroup Subject telah diganti menjadi *${ciko.subject}*`, `Group Settings Change Message`, wm_fatih, [])
      }
     }
     } catch (err){
@@ -139,34 +135,34 @@ zets.ev.on('messages.upsert', async chatUpdate => {
     }
     })
 
-    zets.ev.on('group-participants.update', async (anu) => {
+    client.ev.on('group-participants.update', async (anu) => {
         console.log(anu)
         try {
-            let metadata = await zets.groupMetadata(anu.id)
+            let metadata = await client.groupMetadata(anu.id)
             let participants = anu.participants
             for (let num of participants) {
                 // Get Profile Picture User
                 try {
-                    ppuser = await zets.profilePictureUrl(num, 'image')
+                    ppuser = await client.profilePictureUrl(num, 'image')
                 } catch {
                     ppuser = 'https://tinyurl.com/yx93l6da'
                 }
 
                 // Get Profile Picture Group
                 try {
-                    ppgroup = await zets.profilePictureUrl(anu.id, 'image')
+                    ppgroup = await client.profilePictureUrl(anu.id, 'image')
                 } catch {
                     ppgroup = 'https://tinyurl.com/yx93l6da'
                 }
 
                 if (anu.action == 'add') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
+                    client.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
                 } else if (anu.action == 'remove') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
+                    client.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
                 } else if (anu.action == 'promote') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Promote From ${metadata.subject}` })
+                    client.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Promote From ${metadata.subject}` })
                 } else if (anu.action == 'demote') {
-                    zets.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Demote From ${metadata.subject}` })
+                    client.sendMessage(anu.id, { image: { url: ppuser }, mentions: [num], caption: `@${num.split('@')[0]} Demote From ${metadata.subject}` })
               }
             }
         } catch (err) {
@@ -175,7 +171,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
     })
 	
     // Setting
-    zets.decodeJid = (jid) => {
+    client.decodeJid = (jid) => {
         if (!jid) return jid
         if (/:\d+@/gi.test(jid)) {
             let decode = jidDecode(jid) || {}
@@ -183,44 +179,44 @@ zets.ev.on('messages.upsert', async chatUpdate => {
         } else return jid
     }
     
-    zets.ev.on('contacts.update', update => {
+    client.ev.on('contacts.update', update => {
         for (let contact of update) {
-            let id = zets.decodeJid(contact.id)
+            let id = client.decodeJid(contact.id)
             if (store && store.contacts) store.contacts[id] = { id, name: contact.notify }
         }
     })
 
-    zets.getName = (jid, withoutContact  = false) => {
-        id = zets.decodeJid(jid)
-        withoutContact = zets.withoutContact || withoutContact 
+    client.getName = (jid, withoutContact  = false) => {
+        id = client.decodeJid(jid)
+        withoutContact = client.withoutContact || withoutContact 
         let v
         if (id.endsWith("@g.us")) return new Promise(async (resolve) => {
             v = store.contacts[id] || {}
-            if (!(v.name || v.subject)) v = zets.groupMetadata(id) || {}
+            if (!(v.name || v.subject)) v = client.groupMetadata(id) || {}
             resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'))
         })
         else v = id === '0@s.whatsapp.net' ? {
             id,
             name: 'WhatsApp'
-        } : id === zets.decodeJid(zets.user.id) ?
-            zets.user :
+        } : id === client.decodeJid(client.user.id) ?
+            client.user :
             (store.contacts[id] || {})
             return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
     }
     
-    zets.sendContact = async (jid, kon, quoted = '', opts = {}) => {
+    client.sendContact = async (jid, kon, quoted = '', opts = {}) => {
 	let list = []
 	for (let i of kon) {
 	    list.push({
-	    	displayName: await zets.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await zets.getName(i + '@s.whatsapp.net')}\nFN:${await zets.getName(i + '@s.whatsapp.net')}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:okeae2410@gmail.com\nitem2.X-ABLabel:Email\nitem3.URL:https://instagram.com/cak_haho\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Indonesia;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+	    	displayName: await client.getName(i + '@s.whatsapp.net'),
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await client.getName(i + '@s.whatsapp.net')}\nFN:${await client.getName(i + '@s.whatsapp.net')}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:okeae2410@gmail.com\nitem2.X-ABLabel:Email\nitem3.URL:https://instagram.com/cak_haho\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Indonesia;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
 	    })
 	}
-	zets.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
+	client.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
     }
     
-    zets.setStatus = (status) => {
-        zets.query({
+    client.setStatus = (status) => {
+        client.query({
             tag: 'iq',
             attrs: {
                 to: '@s.whatsapp.net',
@@ -236,28 +232,28 @@ zets.ev.on('messages.upsert', async chatUpdate => {
         return status
     }
 	
-    zets.public = true
+    client.public = true
 
-    zets.serializeM = (m) => smsg(zets, m, store)
+    client.serializeM = (m) => smsg(client, m, store)
 
-    zets.ev.on('connection.update', async (update) => {
+    client.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update	    
         if (connection === 'close') {
         let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-            if (reason === DisconnectReason.badSession) { console.log(`Bad Session File, Please Delete Session and Scan Again`); zets.logout(); }
-            else if (reason === DisconnectReason.connectionClosed) { console.log("Connection closed, reconnecting...."); startzets(); }
-            else if (reason === DisconnectReason.connectionLost) { console.log("Connection Lost from Server, reconnecting..."); startzets(); }
-            else if (reason === DisconnectReason.connectionReplaced) { console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First"); zets.logout(); }
-            else if (reason === DisconnectReason.loggedOut) { console.log(`Device Logged Out, Please Scan Again And Run.`); zets.logout(); }
-            else if (reason === DisconnectReason.restartRequired) { console.log("Restart Required, Restarting..."); startzets(); }
-            else if (reason === DisconnectReason.timedOut) { console.log("Connection TimedOut, Reconnecting..."); startzets(); }
-            else if (reason === DisconnectReason.Multidevicemismatch) { console.log("Multi device mismatch, please scan again"); zets.logout(); }
-            else zets.end(`Unknown DisconnectReason: ${reason}|${connection}`)
+            if (reason === DisconnectReason.badSession) { console.log(`Bad Session File, Please Delete Session and Scan Again`); client.logout(); }
+            else if (reason === DisconnectReason.connectionClosed) { console.log("Connection closed, reconnecting...."); startclient(); }
+            else if (reason === DisconnectReason.connectionLost) { console.log("Connection Lost from Server, reconnecting..."); startclient(); }
+            else if (reason === DisconnectReason.connectionReplaced) { console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First"); client.logout(); }
+            else if (reason === DisconnectReason.loggedOut) { console.log(`Device Logged Out, Please Scan Again And Run.`); client.logout(); }
+            else if (reason === DisconnectReason.restartRequired) { console.log("Restart Required, Restarting..."); startclient(); }
+            else if (reason === DisconnectReason.timedOut) { console.log("Connection TimedOut, Reconnecting..."); startclient(); }
+            else if (reason === DisconnectReason.Multidevicemismatch) { console.log("Multi device mismatch, please scan again"); client.logout(); }
+            else client.end(`Unknown DisconnectReason: ${reason}|${connection}`)
         }
         console.log('Connected...', update)
     })
 
-    zets.ev.on('creds.update', saveState)
+    client.ev.on('creds.update', saveState)
 
     /** Resize Image
       *
@@ -265,7 +261,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
       * @param {Numeric} Width
       * @param {Numeric} Height
       */
-      zets.reSize = async (image, width, height) => {
+      client.reSize = async (image, width, height) => {
        let jimp = require('jimp')
        var oyy = await jimp.read(image);
        var kiyomasa = await oyy.resize(width, height).getBufferAsync(jimp.MIME_JPEG)
@@ -281,25 +277,25 @@ zets.ev.on('messages.upsert', async chatUpdate => {
       * @param {*} quoted
       * @param {*} options
       */
-     zets.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
+     client.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
       let mime = '';
       let res = await axios.head(url)
       mime = res.headers['content-type']
       if (mime.split("/")[1] === "gif") {
-     return zets.sendMessage(jid, { video: await getBuffer(url), caption: caption, gifPlayback: true, ...options}, { quoted: quoted, ...options})
+     return client.sendMessage(jid, { video: await getBuffer(url), caption: caption, gifPlayback: true, ...options}, { quoted: quoted, ...options})
       }
       let type = mime.split("/")[0]+"Message"
       if(mime === "application/pdf"){
-     return zets.sendMessage(jid, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, ...options}, { quoted: quoted, ...options })
+     return client.sendMessage(jid, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, ...options}, { quoted: quoted, ...options })
       }
       if(mime.split("/")[0] === "image"){
-     return zets.sendMessage(jid, { image: await getBuffer(url), caption: caption, ...options}, { quoted: quoted, ...options})
+     return client.sendMessage(jid, { image: await getBuffer(url), caption: caption, ...options}, { quoted: quoted, ...options})
       }
       if(mime.split("/")[0] === "video"){
-     return zets.sendMessage(jid, { video: await getBuffer(url), caption: caption, mimetype: 'video/mp4', ...options}, { quoted: quoted, ...options })
+     return client.sendMessage(jid, { video: await getBuffer(url), caption: caption, mimetype: 'video/mp4', ...options}, { quoted: quoted, ...options })
       }
       if(mime.split("/")[0] === "audio"){
-     return zets.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options}, { quoted: quoted, ...options })
+     return client.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options}, { quoted: quoted, ...options })
       }
       }
 
@@ -313,7 +309,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
       *@param [*] sections
       *@param {*} quoted
       */
-        zets.sendListMsg = (jid, text = '', footer = '', title = '' , butText = '', sects = [], quoted) => {
+        client.sendListMsg = (jid, text = '', footer = '', title = '' , butText = '', sects = [], quoted) => {
         let sections = sects
         var listMes = {
         text: text,
@@ -322,7 +318,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
         buttonText: butText,
         sections
         }
-        zets.sendMessage(jid, listMes, { quoted: quoted })
+        client.sendMessage(jid, listMes, { quoted: quoted })
         }
         
         /** Send Button 5 Location
@@ -334,9 +330,9 @@ zets.ev.on('messages.upsert', async chatUpdate => {
        * @param [*] button
        * @param {*} options
        */
-      zets.send5ButLoc = async (jid , text = '' , footer = '', lok, but = [], options = {}) =>{
-      let bb = await zets.reSize(lok, 300, 300)
-      zets.sendMessage(jid, { location: { jpegThumbnail: bb }, caption: text, footer: footer, templateButtons: but, ...options })
+      client.send5ButLoc = async (jid , text = '' , footer = '', lok, but = [], options = {}) =>{
+      let bb = await client.reSize(lok, 300, 300)
+      client.sendMessage(jid, { location: { jpegThumbnail: bb }, caption: text, footer: footer, templateButtons: but, ...options })
       }
 
     /** Send Button 5 Message
@@ -347,14 +343,14 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} button
      * @returns 
      */
-        zets.send5ButMsg = (jid, text = '' , footer = '', but = []) =>{
+        client.send5ButMsg = (jid, text = '' , footer = '', but = []) =>{
         let templateButtons = but
         var templateMessage = {
         text: text,
         footer: footer,
         templateButtons: templateButtons
         }
-        zets.sendMessage(jid, templateMessage)
+        client.sendMessage(jid, templateMessage)
         }
 
 /** Send Button 5 Image
@@ -367,8 +363,8 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options
      * @returns
      */
-    zets.send5ButImg = async (jid , text = '' , footer = '', img, but = [], buff, options = {}) =>{
-    zets.sendMessage(jid, { image: img, caption: text, footer: footer, templateButtons: but, ...options })
+    client.send5ButImg = async (jid , text = '' , footer = '', img, but = [], buff, options = {}) =>{
+    client.sendMessage(jid, { image: img, caption: text, footer: footer, templateButtons: but, ...options })
     }
 
 /** Send Button 5 Video
@@ -381,9 +377,9 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options
      * @returns
      */
-    zets.send5ButVid = async (jid , text = '' , footer = '', vid, but = [], buff, options = {}) =>{
-    let lol = await zets.reSize(buf, 300, 300)
-    zets.sendMessage(jid, { video: vid, jpegThumbnail: lol, caption: text, footer: footer, templateButtons: but, ...options })
+    client.send5ButVid = async (jid , text = '' , footer = '', vid, but = [], buff, options = {}) =>{
+    let lol = await client.reSize(buf, 300, 300)
+    client.sendMessage(jid, { video: vid, jpegThumbnail: lol, caption: text, footer: footer, templateButtons: but, ...options })
     }
 
 /** Send Button 5 Gif
@@ -396,11 +392,11 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options
      * @returns
      */
-    zets.send5ButGif = async (jid , text = '' , footer = '', gif, but = [], buff, options = {}) =>{
-    let ahh = await zets.reSize(buf, 300, 300)
+    client.send5ButGif = async (jid , text = '' , footer = '', gif, but = [], buff, options = {}) =>{
+    let ahh = await client.reSize(buf, 300, 300)
     let a = [1,2]
     let b = a[Math.floor(Math.random() * a.length)]
-    zets.sendMessage(jid, { video: gif, gifPlayback: true, gifAttribution: b, caption: text, footer: footer, jpegThumbnail: ahh, templateButtons: but, ...options })
+    client.sendMessage(jid, { video: gif, gifPlayback: true, gifAttribution: b, caption: text, footer: footer, jpegThumbnail: ahh, templateButtons: but, ...options })
     }
 
 /**
@@ -412,7 +408,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} quoted 
      * @param {*} options 
      */
-    zets.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
+    client.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
         let buttonMessage = {
             text,
             footer,
@@ -420,7 +416,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
             headerType: 2,
             ...options
         }
-        zets.sendMessage(jid, buttonMessage, { quoted, ...options })
+        client.sendMessage(jid, buttonMessage, { quoted, ...options })
     }
     
     /**
@@ -431,7 +427,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendText = (jid, text, quoted = '', options) => zets.sendMessage(jid, { text: text, ...options }, { quoted })
+    client.sendText = (jid, text, quoted = '', options) => client.sendMessage(jid, { text: text, ...options }, { quoted })
 
     /**
      * 
@@ -442,9 +438,9 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendImage = async (jid, path, caption = '', quoted = '', options) => {
+    client.sendImage = async (jid, path, caption = '', quoted = '', options) => {
 	let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
-        return await zets.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
+        return await client.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
     }
 
     /**
@@ -456,9 +452,9 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendVideo = async (jid, path, caption = '', quoted = '', gif = false, options) => {
+    client.sendVideo = async (jid, path, caption = '', quoted = '', gif = false, options) => {
         let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
-        return await zets.sendMessage(jid, { video: buffer, caption: caption, gifPlayback: gif, ...options }, { quoted })
+        return await client.sendMessage(jid, { video: buffer, caption: caption, gifPlayback: gif, ...options }, { quoted })
     }
 
     /**
@@ -470,9 +466,9 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendAudio = async (jid, path, quoted = '', ptt = false, options) => {
+    client.sendAudio = async (jid, path, quoted = '', ptt = false, options) => {
         let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
-        return await zets.sendMessage(jid, { audio: buffer, ptt: ptt, ...options }, { quoted })
+        return await client.sendMessage(jid, { audio: buffer, ptt: ptt, ...options }, { quoted })
     }
 
     /**
@@ -483,7 +479,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendTextWithMentions = async (jid, text, quoted, options = {}) => zets.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
+    client.sendTextWithMentions = async (jid, text, quoted, options = {}) => client.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
 
     /**
      * 
@@ -493,7 +489,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendImageAsSticker = async (jid, path, quoted, options = {}) => {
+    client.sendImageAsSticker = async (jid, path, quoted, options = {}) => {
         let buff = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
         let buffer
         if (options && (options.packname || options.author)) {
@@ -502,7 +498,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
             buffer = await imageToWebp(buff)
         }
 
-        await zets.sendMessage(jid, { sticker: { url: buffer }, ...options }, { quoted })
+        await client.sendMessage(jid, { sticker: { url: buffer }, ...options }, { quoted })
         return buffer
     }
 
@@ -514,7 +510,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendVideoAsSticker = async (jid, path, quoted, options = {}) => {
+    client.sendVideoAsSticker = async (jid, path, quoted, options = {}) => {
         let buff = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
         let buffer
         if (options && (options.packname || options.author)) {
@@ -523,7 +519,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
             buffer = await videoToWebp(buff)
         }
 
-        await zets.sendMessage(jid, { sticker: { url: buffer }, ...options }, { quoted })
+        await client.sendMessage(jid, { sticker: { url: buffer }, ...options }, { quoted })
         return buffer
     }
 	
@@ -534,7 +530,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} attachExtension 
      * @returns 
      */
-    zets.downloadAndSaveMediaMessage = async (message, filename, attachExtension = true) => {
+    client.downloadAndSaveMediaMessage = async (message, filename, attachExtension = true) => {
         let quoted = message.msg ? message.msg : message
         let mime = (message.msg || message).mimetype || ''
         let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
@@ -550,7 +546,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
         return trueFileName
     }
 
-    zets.downloadMediaMessage = async (message) => {
+    client.downloadMediaMessage = async (message) => {
         let mime = (message.msg || message).mimetype || ''
         let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
         const stream = await downloadContentFromMessage(message, messageType)
@@ -572,8 +568,8 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.sendMedia = async (jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
-        let types = await zets.getFile(path, true)
+    client.sendMedia = async (jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
+        let types = await client.getFile(path, true)
            let { mime, ext, res, data, filename } = types
            if (res && res.status !== 200 || file.length <= 65536) {
                try { throw { json: JSON.parse(file.toString()) } }
@@ -593,7 +589,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
        else if (/video/.test(mime)) type = 'video'
        else if (/audio/.test(mime)) type = 'audio'
        else type = 'document'
-       await zets.sendMessage(jid, { [type]: { url: pathFile }, caption, mimetype, fileName, ...options }, { quoted, ...options })
+       await client.sendMessage(jid, { [type]: { url: pathFile }, caption, mimetype, fileName, ...options }, { quoted, ...options })
        return fs.promises.unlink(pathFile)
        }
 
@@ -605,7 +601,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} options 
      * @returns 
      */
-    zets.copyNForward = async (jid, message, forceForward = false, options = {}) => {
+    client.copyNForward = async (jid, message, forceForward = false, options = {}) => {
         let vtype
 		if (options.readViewOnce) {
 			message.message = message.message && message.message.ephemeralMessage && message.message.ephemeralMessage.message ? message.message.ephemeralMessage.message : (message.message || undefined)
@@ -636,11 +632,11 @@ zets.ev.on('messages.upsert', async chatUpdate => {
                 }
             } : {})
         } : {})
-        await zets.relayMessage(jid, waMessage.message, { messageId:  waMessage.key.id })
+        await client.relayMessage(jid, waMessage.message, { messageId:  waMessage.key.id })
         return waMessage
     }
 
-    zets.cMod = (jid, copy, text = '', sender = zets.user.id, options = {}) => {
+    client.cMod = (jid, copy, text = '', sender = client.user.id, options = {}) => {
         //let copy = message.toJSON()
 		let mtype = Object.keys(copy.message)[0]
 		let isEphemeral = mtype === 'ephemeralMessage'
@@ -661,7 +657,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
 		if (copy.key.remoteJid.includes('@s.whatsapp.net')) sender = sender || copy.key.remoteJid
 		else if (copy.key.remoteJid.includes('@broadcast')) sender = sender || copy.key.remoteJid
 		copy.key.remoteJid = jid
-		copy.key.fromMe = sender === zets.user.id
+		copy.key.fromMe = sender === client.user.id
 
         return proto.WebMessageInfo.fromObject(copy)
     }
@@ -672,7 +668,7 @@ zets.ev.on('messages.upsert', async chatUpdate => {
      * @param {*} path 
      * @returns 
      */
-    zets.getFile = async (PATH, save) => {
+    client.getFile = async (PATH, save) => {
         let res
         let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split`,`[1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
         //if (!Buffer.isBuffer(data)) throw new TypeError('Result is not a buffer')
@@ -692,10 +688,10 @@ zets.ev.on('messages.upsert', async chatUpdate => {
 
     }
 
-    return zets
+    return client
 }
 
-startzets()
+startclient()
 
 
 let file = require.resolve(__filename)
