@@ -1,10 +1,5 @@
-/**
-   * Create By Dika Ardnt
-   * Follow ig saya @naando.io
-*/
-
 require('./config')
-const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@adiwajshing/baileys')
+const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('baileys')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -31,8 +26,8 @@ let setting = JSON.parse(fs.readFileSync('./apikey.json'))
 
 //limit
 limitawal = '100'
-botname = 'ZETS - MD'
-wm = '© ZETS - MD'
+botname = 'client - MD'
+wm = '© client - MD'
 
 // read database
 let tebaklagu = db.data.game.tebaklagu = []
@@ -47,7 +42,7 @@ let tebaklirik = db.data.game.lirik = []
 let tebaktebakan = db.data.game.tebakan = []
 let vote = db.data.others.vote = []
 
-module.exports = zets = async (zets, m, chatUpdate, store) => {
+module.exports = client = async (client, m, chatUpdate, store) => {
 try {
 var body = (m.mtype === 'conversation') ? m.message.conversation : (m.mtype == 'imageMessage') ? m.message.imageMessage.caption : (m.mtype == 'videoMessage') ? m.message.videoMessage.caption : (m.mtype == 'extendedTextMessage') ? m.message.extendedTextMessage.text : (m.mtype == 'buttonsResponseMessage') ? m.message.buttonsResponseMessage.selectedButtonId : (m.mtype == 'listResponseMessage') ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (m.mtype == 'templateButtonReplyMessage') ? m.message.templateButtonReplyMessage.selectedId : (m.mtype === 'messageContextInfo') ? (m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text) : ''
 var budy = (typeof m.text == 'string' ? m.text : '')
@@ -56,7 +51,7 @@ const isCmd = body.startsWith(prefix)
 const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
 const args = body.trim().split(/ +/).slice(1)
 const pushname = m.pushName || "No Name"
-const botNumber = await zets.decodeJid(zets.user.id)
+const botNumber = await client.decodeJid(client.user.id)
 const isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
 const itsMe = m.sender == botNumber ? true : false
 const text = q = args.join(" ")
@@ -66,7 +61,7 @@ const mime = (quoted.msg || quoted).mimetype || ''
 	const isMedia = /image|video|sticker|audio/.test(mime)
 	
 // Group
-const groupMetadata = m.isGroup ? await zets.groupMetadata(m.chat).catch(e => {}) : ''
+const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch(e => {}) : ''
 const groupName = m.isGroup ? groupMetadata.subject : ''
 const participants = m.isGroup ? await groupMetadata.participants : ''
 const groupAdmins = m.isGroup ? await participants.filter(v => v.admin !== null).map(v => v.id) : ''
@@ -145,13 +140,13 @@ console.error(err)
  }
   
 // Public & Self
-if (!zets.public) {
+if (!client.public) {
 if (!m.key.fromMe) return
 }
 
 // Push Message To Console && Auto Read
         if (m.message) {
-            zets.readMessages([m.key])
+            client.readMessages([m.key])
             console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
         }
 	
@@ -244,14 +239,14 @@ timezone: "Asia/Jakarta"
 	let setting = global.db.data.settings[botNumber]
 	if (new Date() * 1 - setting.status > 1000) {
 		let uptime = await runtime(process.uptime())
-		await zets.setStatus(`${zets.user.name} | Runtime : ${runtime(uptime)}`)
+		await client.setStatus(`${client.user.name} | Runtime : ${runtime(uptime)}`)
 		setting.status = new Date() * 1
 	}
 	}
 
 const listmsg = (from, title, desc, list) => { // ngeread nya pake rowsId, jadi command nya ga keliatan
-let po = zets.prepareMessageFromContent(from, {"listMessage": {"title": title,"description": desc,"buttonText": "Pilih Disini","footerText": "𝐻𝑒𝑟𝑚𝑎𝑛 𝐶ℎ𝑎𝑛𝑒𝑙᭄𓅂","listType": "SINGLE_SELECT","sections": list, quoted:mek}}, {})
-return zets.relayWAMessage(po, {waitForAck: true, quoted:mek})
+let po = client.prepareMessageFromContent(from, {"listMessage": {"title": title,"description": desc,"buttonText": "Pilih Disini","footerText": "𝐻𝑒𝑟𝑚𝑎𝑛 𝐶ℎ𝑎𝑛𝑒𝑙᭄𓅂","listType": "SINGLE_SELECT","sections": list, quoted:mek}}, {})
+return client.relayWAMessage(po, {waitForAck: true, quoted:mek})
 }
 	
 	  // Anti Link
@@ -259,13 +254,13 @@ if (db.data.chats[m.chat].antilink) {
 if (budy.match(`chat.whatsapp.com`)) {
 m.reply(`「 ANTI LINK 」\n\nKamu terdeteksi mengirim link group, maaf kamu akan di kick !`)
 if (!isBotAdmins) return m.reply(`Ehh bot gak admin T_T`)
-let gclink = (`https://chat.whatsapp.com/`+await zets.groupInviteCode(m.chat))
+let gclink = (`https://chat.whatsapp.com/`+await client.groupInviteCode(m.chat))
 let isLinkThisGc = new RegExp(gclink, 'i')
 let isgclink = isLinkThisGc.test(m.text)
 if (isgclink) return m.reply(`Ehh maaf gak jadi, karena kamu ngirim link group ini`)
 if (isAdmins) return m.reply(`Ehh maaf kamu admin`)
 if (isCreator) return m.reply(`Ehh maaf kamu owner bot ku`)
-zets.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
+client.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
 }
 }
 
@@ -279,10 +274,10 @@ if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in globa
 let hash = global.db.data.sticker[m.msg.fileSha256.toString('base64')]
 let { text, mentionedJid } = hash
 let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, {
-userJid: zets.user.id,
+userJid: client.user.id,
 quoted: m.quoted && m.quoted.fakeObj
 })
-messages.key.fromMe = areJidsSameUser(m.sender, zets.user.id)
+messages.key.fromMe = areJidsSameUser(m.sender, client.user.id)
 messages.key.id = m.key.id
 messages.pushName = m.pushName
 if (m.isGroup) messages.participant = m.sender
@@ -291,7 +286,7 @@ let msg = {
 messages: [proto.WebMessageInfo.fromObject(messages)],
 type: 'append'
 }
-zets.ev.emit('messages.upsert', msg)
+client.ev.emit('messages.upsert', msg)
 }
 	
 	if (('family100'+m.chat in _family100) && isCmd) {
@@ -312,7 +307,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 return isSurender || room.terjawab[index] ? `(${index + 1}) ${jawaban} ${room.terjawab[index] ? '@' + room.terjawab[index].split('@')[0] : ''}`.trim() : false
 }).filter(v => v).join('\n')}
 ${isSurender ? '' : `Perfect Player`}`.trim()
-zets.sendText(m.chat, caption, m, { contextInfo: { mentionedJid: parseMention(caption) }}).then(mes => { return _family100['family100'+m.chat].pesan = mesg }).catch(_ => _)
+client.sendText(m.chat, caption, m, { contextInfo: { mentionedJid: parseMention(caption) }}).then(mes => { return _family100['family100'+m.chat].pesan = mesg }).catch(_ => _)
 if (isWin || isSurender) delete _family100['family100'+m.chat]
 }
 
@@ -320,7 +315,7 @@ if (tebaklagu.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebaklagu[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebaklagu[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -338,7 +333,7 @@ if (tebakgambar.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakgambar[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebakgambar[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -347,7 +342,7 @@ if (tebakkata.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakkata[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebakkata[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -357,7 +352,7 @@ kuis = true
 jawaban = caklontong[m.sender.split('@')[0]]
 	deskripsi = caklontong_desk[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete caklontong[m.sender.split('@')[0]]
 		delete caklontong_desk[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
@@ -367,7 +362,7 @@ if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebakkalimat[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebakkalimat[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -376,7 +371,7 @@ if (tebaklirik.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
 kuis = true
 jawaban = tebaklirik[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebaklirik[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -385,7 +380,7 @@ delete tebaklirik[m.sender.split('@')[0]]
 kuis = true
 jawaban = tebaktebakan[m.sender.split('@')[0]]
 if (budy.toLowerCase() == jawaban) {
-await zets.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, zets.user.name, m)
+await client.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, client.user.name, m)
 delete tebaktebakan[m.sender.split('@')[0]]
 } else m.reply('*Jawaban Salah!*')
 }
@@ -448,8 +443,8 @@ ${isWin ? `@${winner.split('@')[0]} Menang!` : isTie ? `Game berakhir` : `Gilira
 Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
 	if ((room.game._currentTurn ^ isSurrender ? room.x : room.o) !== m.chat)
 	room[room.game._currentTurn ^ isSurrender ? 'x' : 'o'] = m.chat
-	if (room.x !== room.o) await zets.sendText(room.x, str, m, { mentions: parseMention(str) } )
-	await zets.sendText(room.o, str, m, { mentions: parseMention(str) } )
+	if (room.x !== room.o) await client.sendText(room.x, str, m, { mentions: parseMention(str) } )
+	await client.sendText(room.o, str, m, { mentions: parseMention(str) } )
 	if (isTie || isWin) {
 	delete this.game[room.id]
 	}
@@ -463,7 +458,7 @@ Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
 	let tie = false
 	if (m.sender == roof.p2 && /^(acc(ept)?|terima|gas|oke?|tolak|gamau|nanti|ga(k.)?bisa|y)/i.test(m.text) && m.isGroup && roof.status == 'wait') {
 	if (/^(tolak|gamau|nanti|n|ga(k.)?bisa)/i.test(m.text)) {
-	zets.sendTextWithMentions(m.chat, `@${roof.p2.split`@`[0]} menolak suit, suit dibatalkan`, m)
+	client.sendTextWithMentions(m.chat, `@${roof.p2.split`@`[0]} menolak suit, suit dibatalkan`, m)
 	delete this.suit[roof.id]
 	return !0
 	}
@@ -471,20 +466,20 @@ Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
 	roof.asal = m.chat
 	clearTimeout(roof.waktu)
 	//delete roof[roof.id].waktu
-	zets.sendText(m.chat, `Suit telah dikirimkan ke chat
+	client.sendText(m.chat, `Suit telah dikirimkan ke chat
 
 @${roof.p.split`@`[0]} dan 
 @${roof.p2.split`@`[0]}
 
 Silahkan pilih suit di chat masing"
 klik https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, roof.p2] })
-	if (!roof.pilih) zets.sendText(roof.p, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
-	if (!roof.pilih2) zets.sendText(roof.p2, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
+	if (!roof.pilih) client.sendText(roof.p, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
+	if (!roof.pilih2) client.sendText(roof.p2, `Silahkan pilih \n\nBatu🗿\nKertas📄\nGunting✂️`, m)
 	roof.waktu_milih = setTimeout(() => {
-	if (!roof.pilih && !roof.pilih2) zets.sendText(m.chat, `Kedua pemain tidak niat main,\nSuit dibatalkan`)
+	if (!roof.pilih && !roof.pilih2) client.sendText(m.chat, `Kedua pemain tidak niat main,\nSuit dibatalkan`)
 	else if (!roof.pilih || !roof.pilih2) {
 	win = !roof.pilih ? roof.p2 : roof.p
-	zets.sendTextWithMentions(m.chat, `@${(roof.pilih ? roof.p2 : roof.p).split`@`[0]} tidak memilih suit, game berakhir`, m)
+	client.sendTextWithMentions(m.chat, `@${(roof.pilih ? roof.p2 : roof.p).split`@`[0]} tidak memilih suit, game berakhir`, m)
 	}
 	delete this.suit[roof.id]
 	return !0
@@ -500,13 +495,13 @@ klik https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, roof.p2] }
 	roof.pilih = reg.exec(m.text.toLowerCase())[0]
 	roof.text = m.text
 	m.reply(`Kamu telah memilih ${m.text} ${!roof.pilih2 ? `\n\nMenunggu lawan memilih` : ''}`)
-	if (!roof.pilih2) zets.sendText(roof.p2, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
+	if (!roof.pilih2) client.sendText(roof.p2, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
 	}
 	if (jwb2 && reg.test(m.text) && !roof.pilih2 && !m.isGroup) {
 	roof.pilih2 = reg.exec(m.text.toLowerCase())[0]
 	roof.text2 = m.text
 	m.reply(`Kamu telah memilih ${m.text} ${!roof.pilih ? `\n\nMenunggu lawan memilih` : ''}`)
-	if (!roof.pilih) zets.sendText(roof.p, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
+	if (!roof.pilih) client.sendText(roof.p, '_Lawan sudah memilih_\nSekarang giliran kamu', 0)
 	}
 	let stage = roof.pilih
 	let stage2 = roof.pilih2
@@ -519,7 +514,7 @@ klik https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, roof.p2] }
 	else if (k.test(stage) && b.test(stage2)) win = roof.p
 	else if (k.test(stage) && g.test(stage2)) win = roof.p2
 	else if (stage == stage2) tie = true
-	zets.sendText(roof.asal, `_*Hasil Suit*_${tie ? '\nSERI' : ''}
+	client.sendText(roof.asal, `_*Hasil Suit*_${tie ? '\nSERI' : ''}
 
 @${roof.p.split`@`[0]} (${roof.text}) ${tie ? '' : roof.p == win ? ` Menang \n` : ` Kalah \n`}
 @${roof.p2.split`@`[0]} (${roof.text2}) ${tie ? '' : roof.p2 == win ? ` Menang \n` : ` Kalah \n`}
@@ -594,8 +589,8 @@ ${arr.slice(6).join('')}
 Menunggu @${room.game.currentTurn.split('@')[0]}
 
 Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
-if (room.x !== room.o) await zets.sendText(room.x, str, m, { mentions: parseMention(str) } )
-await zets.sendText(room.o, str, m, { mentions: parseMention(str) } )
+if (room.x !== room.o) await client.sendText(room.x, str, m, { mentions: parseMention(str) } )
+await client.sendText(room.o, str, m, { mentions: parseMention(str) } )
 } else {
 room = {
 id: 'tictactoe-' + (+new Date),
@@ -615,7 +610,7 @@ this.game = this.game ? this.game : {}
 try {
 if (this.game) {
 delete this.game
-zets.sendText(m.chat, `Berhasil delete session TicTacToe`, m)
+client.sendText(m.chat, `Berhasil delete session TicTacToe`, m)
 } else if (!this.game) {
 m.reply(`Session TicTacToe🎮 tidak ada`)
 } else throw '?'
@@ -640,27 +635,27 @@ let caption = `_*SUIT PvP*_
 
 Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 this.suit[id] = {
-chat: await zets.sendText(m.chat, caption, m, { mentions: parseMention(caption) }),
+chat: await client.sendText(m.chat, caption, m, { mentions: parseMention(caption) }),
 id: id,
 p: m.sender,
 p2: m.mentionedJid[0],
 status: 'wait',
 waktu: setTimeout(() => {
-if (this.suit[id]) zets.sendText(m.chat, `_Waktu suit habis_`, m)
+if (this.suit[id]) client.sendText(m.chat, `_Waktu suit habis_`, m)
 delete this.suit[id]
 }, 60000), poin, poin_lose, timeout
 }
 }
 break
 	case 'donasi': case 'sewabot': case 'sewa': case 'buypremium': case 'donate': {
-zets.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/f8d35118f27c5b371da2b.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⌕ 15k Per Group via E-Walet 1 Month\n⌕ 20k via pulsa 1 Month\n\n Premium Price Bot\n⌕ 10k per User 1 bulan\n\nPayment can be via Paypal/link aja/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6281252848955 (Owner)\n\nDonate For Me : \n\n⌕ Paypal : https://www.paypal.me/Rifando35\n⌕ Saweria : https://saweria.co/Nando35` }, { quoted: m })
+client.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/f8d35118f27c5b371da2b.jpg' }, caption: `*Hai Kak ${m.pushName}*\n\n Bot Rental Prices\n⌕ 15k Per Group via E-Walet 1 Month\n⌕ 20k via pulsa 1 Month\n\n Premium Price Bot\n⌕ 10k per User 1 bulan\n\nPayment can be via Paypal/link aja/pulsa\n\nFor more details, you can chat with the owner\nhttps://wa.me/6281252848955 (Owner)\n\nDonate For Me : \n\n⌕ Paypal : https://www.paypal.me/Rifando35\n⌕ Saweria : https://saweria.co/Nando35` }, { quoted: m })
 }
 break
 case 'sc':  case 'sourcecode': {
 addCountCmd(`#${command.slice(1)}`, sender, _cmd)
 	anu = `
-⌕ Script : https://github.com/Nando35/Zetspublic
-⌕ Script ori : https://github.com/DikaArdnt/zets-Morou
+⌕ Script : https://github.com/Nando35/clientpublic
+⌕ Script ori : https://github.com/DikaArdnt/client-Morou
 
 Jangan lupa kasih bintang.
 ⌕ Donate : 628125284895 (Dana / gopay)
@@ -675,7 +670,7 @@ displayText: 'Instagram',
 url: 'https://instagram.com/naando.jpeg'
 }
 }]
-zets.send5ButImg(m.chat, anu, botname, global.sc, btn)
+client.send5ButImg(m.chat, anu, botname, global.sc, btn)
  }
 break
 
@@ -700,7 +695,7 @@ displayText: 'Instagram',
 url: 'https://instagram.com/naando.jpeg'
 }
 }]
-zets.send5ButImg(m.chat, anu, botname, global.tq, btn)
+client.send5ButImg(m.chat, anu, botname, global.tq, btn)
  }
 break
 
@@ -709,19 +704,19 @@ addCountCmd(`#${command.slice(1)}`, sender, _cmd)
 if (!isCreator) throw mess.owner
 if (!q) throw 'Option : 1. mute\n2. unmute\n3. archive\n4. unarchive\n5. read\n6. unread\n7. delete'
 if (args[0] === 'mute') {
-zets.chatModify({ mute: 'Infinity' }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ mute: 'Infinity' }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'unmute') {
-zets.chatModify({ mute: null }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ mute: null }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'archive') {
-zets.chatModify({  archive: true }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({  archive: true }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'unarchive') {
-zets.chatModify({ archive: false }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ archive: false }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'read') {
-zets.chatModify({ markRead: true }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ markRead: true }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'unread') {
-zets.chatModify({ markRead: false }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ markRead: false }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'delete') {
-zets.chatModify({ clear: { message: { id: m.quoted.id, fromMe: true }} }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+client.chatModify({ clear: { message: { id: m.quoted.id, fromMe: true }} }, m.chat, []).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 }
 }
 break
@@ -735,7 +730,7 @@ let random = anu[Math.floor(Math.random() * anu.length)]
 let hasil = `*Jawablah Pertanyaan Berikut :*\n${random.soal}\n\nTerdapat *${random.jawaban.length}* Jawaban ${random.jawaban.find(v => v.includes(' ')) ? `(beberapa Jawaban Terdapat Spasi)` : ''}`.trim()
 _family100['family100'+m.chat] = {
 id: 'family100'+m.chat,
-pesan: await zets.sendText(m.chat, hasil, m),
+pesan: await client.sendText(m.chat, hasil, m),
 ...random,
 terjawab: Array.from(random.jawaban, () => false),
 hadiah: 6,
@@ -754,80 +749,80 @@ if (args[0] === "lagu") {
 if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://fatiharridho.github.io/tebaklagu.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-let msg = await zets.sendMessage(m.chat, { audio: { url: result.link_song }, mimetype: 'audio/mpeg' }, { quoted: m })
-zets.sendText(m.chat, `Lagu Tersebut Adalah Lagu dari?\n\nArtist : ${result.artist}\nWaktu : 60s`, msg).then(() => {
+let msg = await client.sendMessage(m.chat, { audio: { url: result.link_song }, mimetype: 'audio/mpeg' }, { quoted: m })
+client.sendText(m.chat, `Lagu Tersebut Adalah Lagu dari?\n\nArtist : ${result.artist}\nWaktu : 60s`, msg).then(() => {
 tebaklagu[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 })
 await sleep(60000)
 if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete tebaklagu[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'gambar') {
 if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakgambar.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-zets.sendImage(m.chat, result.img, `Silahkan Jawab Soal Di Atas Ini\n\nDeskripsi : ${result.deskripsi}\nWaktu : 60s`, m).then(() => {
+client.sendImage(m.chat, result.img, `Silahkan Jawab Soal Di Atas Ini\n\nDeskripsi : ${result.deskripsi}\nWaktu : 60s`, m).then(() => {
 tebakgambar[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 })
 await sleep(60000)
 if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete tebakgambar[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'kata') {
 if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakkata.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-zets.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
+client.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
 tebakkata[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 })
 await sleep(60000)
 if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete tebakkata[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'kalimat') {
 if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebakkalimat.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-zets.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
+client.sendText(m.chat, `Silahkan Jawab Pertanyaan Berikut\n\n${result.soal}\nWaktu : 60s`, m).then(() => {
 tebakkalimat[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 })
 await sleep(60000)
 if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete tebakkalimat[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'lirik') {
 if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/tebaklirik.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-zets.sendText(m.chat, `Ini Adalah Lirik Dari Lagu? : *${result.soal}*?\nWaktu : 60s`, m).then(() => {
+client.sendText(m.chat, `Ini Adalah Lirik Dari Lagu? : *${result.soal}*?\nWaktu : 60s`, m).then(() => {
 tebaklirik[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 })
 await sleep(60000)
 if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete tebaklirik[m.sender.split('@')[0]]
 }
 } else if (args[0] === 'lontong') {
 if (caklontong.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang Belum Diselesaikan!"
 let anu = await fetchJson('https://raw.githubusercontent.com/BochilTeam/database/master/games/caklontong.json')
 let result = anu[Math.floor(Math.random() * anu.length)]
-zets.sendText(m.chat, `*Jawablah Pertanyaan Berikut :*\n${result.soal}*\nWaktu : 60s`, m).then(() => {
+client.sendText(m.chat, `*Jawablah Pertanyaan Berikut :*\n${result.soal}*\nWaktu : 60s`, m).then(() => {
 caklontong[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
 		caklontong_desk[m.sender.split('@')[0]] = result.deskripsi
 })
 await sleep(60000)
 if (caklontong.hasOwnProperty(m.sender.split('@')[0])) {
 console.log("Jawaban: " + result.jawaban)
-zets.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban:  ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, zets.user.name, m)
+client.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban:  ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, client.user.name, m)
 delete caklontong[m.sender.split('@')[0]]
 		delete caklontong_desk[m.sender.split('@')[0]]
 }
@@ -839,7 +834,7 @@ if (kuismath.hasOwnProperty(m.sender.split('@')[0])) throw "Masih Ada Sesi Yang 
 let { genMath, modes } = require('./src/math')
 if (!text) throw `Mode: ${Object.keys(modes).join(' | ')}\nContoh penggunaan: ${prefix}math medium`
 let result = await genMath(text.toLowerCase())
-zets.sendText(m.chat, `*Berapa hasil dari: ${result.soal.toLowerCase()}*?\n\nWaktu: ${(result.waktu / 1000).toFixed(2)} detik`, m).then(() => {
+client.sendText(m.chat, `*Berapa hasil dari: ${result.soal.toLowerCase()}*?\n\nWaktu: ${(result.waktu / 1000).toFixed(2)} detik`, m).then(() => {
 kuismath[m.sender.split('@')[0]] = result.jawaban
 })
 await sleep(result.waktu)
@@ -862,7 +857,7 @@ let ments = [me, jodoh]
 let buttons = [
 { buttonId: 'jodohku', buttonText: { displayText: 'Jodohku' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, jawab, zets.user.name, m, {mentions: ments})
+await client.sendButtonText(m.chat, buttons, jawab, client.user.name, m, {mentions: ments})
 }
 break
 case 'jadian': {
@@ -877,7 +872,7 @@ let menst = [orang, jodoh]
 let buttons = [
 { buttonId: 'jadian', buttonText: { displayText: 'Jodohku' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, jawab, zets.user.name, m, {mentions: menst})
+await client.sendButtonText(m.chat, buttons, jawab, client.user.name, m, {mentions: menst})
 }
 break
 case 'react': {
@@ -888,7 +883,7 @@ text: args[0],
 key: { remoteJid: m.chat, fromMe: true, id: quoted.id }
 }
 }
-zets.sendMessage(m.chat, reactionMessage)
+client.sendMessage(m.chat, reactionMessage)
 }
 break  
 case 'join': {
@@ -897,12 +892,12 @@ if (!text) throw 'Masukkan Link Group!'
 if (!isUrl(args[0]) && !args[0].includes('whatsapp.com')) throw 'Link Invalid!'
 m.reply(mess.wait)
 let result = args[0].split('https://chat.whatsapp.com/')[1]
-await zets.groupAcceptInvite(result).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+await client.groupAcceptInvite(result).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 }
 break
 case 'leave': {
 if (!isCreator) throw mess.owner
-await zets.groupLeave(m.chat).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+await client.groupLeave(m.chat).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 }
 break
 case 'setexif': {
@@ -918,7 +913,7 @@ break
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.groupParticipantsUpdate(m.chat, [users], 'remove').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.groupParticipantsUpdate(m.chat, [users], 'remove').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 	case 'add': {
@@ -926,7 +921,7 @@ if (!isAdmins) throw mess.admin
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 		let users = m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.groupParticipantsUpdate(m.chat, [users], 'add').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.groupParticipantsUpdate(m.chat, [users], 'add').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 	case 'promote': {
@@ -934,7 +929,7 @@ if (!isAdmins) throw mess.admin
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.groupParticipantsUpdate(m.chat, [users], 'promote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.groupParticipantsUpdate(m.chat, [users], 'promote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 	case 'demote': {
@@ -942,19 +937,19 @@ if (!isAdmins) throw mess.admin
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.groupParticipantsUpdate(m.chat, [users], 'demote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.groupParticipantsUpdate(m.chat, [users], 'demote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 case 'block': {
 		if (!isCreator) throw mess.owner
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.updateBlockStatus(users, 'block').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.updateBlockStatus(users, 'block').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 case 'unblock': {
 		if (!isCreator) throw mess.owner
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await zets.updateBlockStatus(users, 'unblock').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+		await client.updateBlockStatus(users, 'unblock').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
 	case 'setname': case 'setsubject': {
@@ -962,7 +957,7 @@ if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 if (!text) throw 'Text ?'
-await zets.groupUpdateSubject(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
+await client.groupUpdateSubject(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
 }
 break
   case 'setdesc': case 'setdesk': {
@@ -970,7 +965,7 @@ if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 if (!text) throw 'Text ?'
-await zets.groupUpdateDescription(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
+await client.groupUpdateDescription(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
 }
 break
   case 'setppbot': {
@@ -978,8 +973,8 @@ if (!isCreator) throw mess.owner
 if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
 if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
 if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
-let media = await zets.downloadAndSaveMediaMessage(quoted)
-await zets.updateProfilePicture(botNumber, { url: media }).catch((err) => fs.unlinkSync(media))
+let media = await client.downloadAndSaveMediaMessage(quoted)
+await client.updateProfilePicture(botNumber, { url: media }).catch((err) => fs.unlinkSync(media))
 m.reply(mess.success)
 }
 break
@@ -989,8 +984,8 @@ if (!isAdmins) throw mess.admin
 if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
 if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
 if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
-let media = await zets.downloadAndSaveMediaMessage(quoted)
-await zets.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
+let media = await client.downloadAndSaveMediaMessage(quoted)
+await client.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
 m.reply(mess.success)
 }
 break
@@ -1004,14 +999,14 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
 for (let mem of participants) {
 teks += `⌕ @${mem.id.split('@')[0]}\n`
 }
-zets.sendMessage(m.chat, { text: teks, mentions: participants.map(a => a.id) }, { quoted: m })
+client.sendMessage(m.chat, { text: teks, mentions: participants.map(a => a.id) }, { quoted: m })
 }
 break
 case 'hidetag': {
 if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
-zets.sendMessage(m.chat, { text : q ? q : '' , mentions: participants.map(a => a.id)}, { quoted: m })
+client.sendMessage(m.chat, { text : q ? q : '' , mentions: participants.map(a => a.id)}, { quoted: m })
 }
 break
 	case 'style': case 'styletext': {
@@ -1062,11 +1057,11 @@ let buttonsVote = [
 
 let buttonMessageVote = {
 text: teks_vote,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttonsVote,
 headerType: 1
 }
-zets.sendMessage(m.chat, buttonMessageVote)
+client.sendMessage(m.chat, buttonMessageVote)
 	}
 break
    case 'upvote': {
@@ -1103,12 +1098,12 @@ let buttonsUpvote = [
 
 let buttonMessageUpvote = {
 text: teks_vote,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttonsUpvote,
 headerType: 1,
 mentions: menvote
  }
-zets.sendMessage(m.chat, buttonMessageUpvote)
+client.sendMessage(m.chat, buttonMessageUpvote)
 	}
  break
 case 'devote': {
@@ -1145,12 +1140,12 @@ let buttonsDevote = [
 
 let buttonMessageDevote = {
 text: teks_vote,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttonsDevote,
 headerType: 1,
 mentions: menvote
 }
-zets.sendMessage(m.chat, buttonMessageDevote)
+client.sendMessage(m.chat, buttonMessageDevote)
 	}
 break
  
@@ -1178,9 +1173,9 @@ ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
 *${prefix}hapusvote* - untuk menghapus vote
 
 
-©${zets.user.id}
+©${client.user.id}
 `
-zets.sendTextWithMentions(m.chat, teks_vote, m)
+client.sendTextWithMentions(m.chat, teks_vote, m)
 break
 		case 'deletevote': case'delvote': case 'hapusvote': {
 if (!m.isGroup) throw mess.group
@@ -1194,15 +1189,15 @@ if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 if (args[0] === 'close'){
-await zets.groupSettingUpdate(m.chat, 'announcement').then((res) => m.reply(`Sukses Menutup Group`)).catch((err) => m.reply(jsonformat(err)))
+await client.groupSettingUpdate(m.chat, 'announcement').then((res) => m.reply(`Sukses Menutup Group`)).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'open'){
-await zets.groupSettingUpdate(m.chat, 'not_announcement').then((res) => m.reply(`Sukses Membuka Group`)).catch((err) => m.reply(jsonformat(err)))
+await client.groupSettingUpdate(m.chat, 'not_announcement').then((res) => m.reply(`Sukses Membuka Group`)).catch((err) => m.reply(jsonformat(err)))
 } else {
 let buttons = [
 { buttonId: 'group open', buttonText: { displayText: 'Open' }, type: 1 },
 { buttonId: 'group close', buttonText: { displayText: 'Close' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `Mode Group`, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `Mode Group`, client.user.name, m)
 
  }
 }
@@ -1212,15 +1207,15 @@ if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
  if (args[0] === 'open'){
-await zets.groupSettingUpdate(m.chat, 'unlocked').then((res) => m.reply(`Sukses Membuka Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
+await client.groupSettingUpdate(m.chat, 'unlocked').then((res) => m.reply(`Sukses Membuka Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
  } else if (args[0] === 'close'){
-await zets.groupSettingUpdate(m.chat, 'locked').then((res) => m.reply(`Sukses Menutup Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
+await client.groupSettingUpdate(m.chat, 'locked').then((res) => m.reply(`Sukses Menutup Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
  } else {
  let buttons = [
 { buttonId: 'editinfo open', buttonText: { displayText: 'Open' }, type: 1 },
 { buttonId: 'editinfo close', buttonText: { displayText: 'Close' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `Mode Edit Info`, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `Mode Edit Info`, client.user.name, m)
 
 }
 }
@@ -1242,7 +1237,7 @@ m.reply(`Antilink Tidak Aktif !`)
 { buttonId: 'antilink on', buttonText: { displayText: 'On' }, type: 1 },
 { buttonId: 'antilink off', buttonText: { displayText: 'Off' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `Mode Antilink`, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `Mode Antilink`, client.user.name, m)
 }
  }
  break
@@ -1253,24 +1248,24 @@ if (!isAdmins) throw mess.admin
 if (args[0] === "on") {
 if (db.data.chats[m.chat].mute) return m.reply(`Sudah Aktif Sebelumnya`)
 db.data.chats[m.chat].mute = true
-m.reply(`${zets.user.name} telah di mute di group ini !`)
+m.reply(`${client.user.name} telah di mute di group ini !`)
 } else if (args[0] === "off") {
 if (!db.data.chats[m.chat].mute) return m.reply(`Sudah Tidak Aktif Sebelumnya`)
 db.data.chats[m.chat].mute = false
-m.reply(`${zets.user.name} telah di unmute di group ini !`)
+m.reply(`${client.user.name} telah di unmute di group ini !`)
 } else {
  let buttons = [
 { buttonId: 'mute on', buttonText: { displayText: 'On' }, type: 1 },
 { buttonId: 'mute off', buttonText: { displayText: 'Off' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `Mute Bot`, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `Mute Bot`, client.user.name, m)
 }
  }
  break
 case 'linkgroup': case 'linkgc': {
 if (!m.isGroup) throw mess.group
-let response = await zets.groupInviteCode(m.chat)
-zets.sendText(m.chat, `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, m, { detectLink: true })
+let response = await client.groupInviteCode(m.chat)
+client.sendText(m.chat, `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, m, { detectLink: true })
 }
 break
 case 'ephemeral': {
@@ -1279,9 +1274,9 @@ if (!isBotAdmins) throw mess.botAdmin
 if (!isAdmins) throw mess.admin
 if (!text) throw 'Masukkan value enable/disable'
 if (args[0] === 'enable') {
-await zets.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+await client.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 } else if (args[0] === 'disable') {
-await zets.sendMessage(m.chat, { disappearingMessagesInChat: false }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+await client.sendMessage(m.chat, { disappearingMessagesInChat: false }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 }
 }
 break
@@ -1289,13 +1284,13 @@ case 'delete': case 'del': {
 if (!m.quoted) throw false
 let { chat, fromMe, id, isBaileys } = m.quoted
 if (!isBaileys) throw 'Pesan tersebut bukan dikirim oleh bot!'
-zets.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: true, id: m.quoted.id, participant: m.quoted.sender } })
+client.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: true, id: m.quoted.id, participant: m.quoted.sender } })
 }
 break
 case 'bcgc': case 'bcgroup': {
 if (!isCreator) throw mess.owner
 if (!text) throw `Text mana?\n\nExample : ${prefix + command} fatih-san`
-let getGroups = await zets.groupFetchAllParticipating()
+let getGroups = await client.groupFetchAllParticipating()
 let groups = Object.entries(getGroups).slice(0).map(entry => entry[1])
 let anu = groups.map(v => v.id)
 m.reply(`Mengirim Broadcast Ke ${anu.length} Group Chat, Waktu Selesai ${anu.length * 1.5} detik`)
@@ -1304,11 +1299,11 @@ await sleep(1500)
 let btn = [{
 urlButton: {
 displayText: 'Source Code',
-url: 'https://github.com/DikaArdnt/zets-Morou'
+url: 'https://github.com/DikaArdnt/client-Morou'
 }
 }]
   let txt = `「 Broadcast Bot 」\n\n${text}`
-  zets.send5ButImg(i, txt, zets.user.name, global.thumb, btn)
+  client.send5ButImg(i, txt, client.user.name, global.thumb, btn)
 }
 m.reply(`Sukses Mengirim Broadcast Ke ${anu.length} Group`)
 }
@@ -1323,11 +1318,11 @@ m.reply(`Mengirim Broadcast Ke ${anu.length} Chat\nWaktu Selesai ${anu.length * 
 		let btn = [{
 urlButton: {
 displayText: 'Source Code',
-url: 'https://github.com/DikaArdnt/zets-Morou'
+url: 'https://github.com/DikaArdnt/client-Morou'
 }
 }]
   let txt = `「 Broadcast Bot 」\n\n${text}`
-  zets.send5ButImg(yoi, txt, zets.user.name, global.thumb, btn)
+  client.send5ButImg(yoi, txt, client.user.name, global.thumb, btn)
 		}
 		m.reply('Sukses Broadcast')
 }
@@ -1344,12 +1339,12 @@ let waktu = read ? read : unread
 teks += `⌕ @${i.userJid.split('@')[0]}\n`
 teks += ` ┗━⌕ *Waktu :* ${moment(waktu * 1000).format('DD/MM/YY HH:mm:ss')} ⌕ *Status :* ${read ? 'Dibaca' : 'Terkirim'}\n\n`
 }
-zets.sendTextWithMentions(m.chat, teks, m)
+client.sendTextWithMentions(m.chat, teks, m)
 }
 break
 case 'q': case 'quoted': {
 		if (!m.quoted) return m.reply('Reply Pesannya!!')
-		let wokwol = await zets.serializeM(await m.getQuotedObj())
+		let wokwol = await client.serializeM(await m.getQuotedObj())
 		if (!wokwol.quoted) return m.reply('Pesan Yang anda reply tidak mengandung reply')
 		await wokwol.quoted.copyNForward(m.chat, true)
 }
@@ -1361,23 +1356,23 @@ case 'listpc': {
  let nama = store.messages[i].array[0].pushName
  teks += `⌕ *Nama :* ${nama}\n⌕ *User :* @${i.split('@')[0]}\n⌕ *Chat :* https://wa.me/${i.split('@')[0]}\n\n────────────────────────\n\n`
  }
- zets.sendTextWithMentions(m.chat, teks, m)
+ client.sendTextWithMentions(m.chat, teks, m)
  }
  break
 case 'listgc': {
  let anu = await store.chats.all().filter(v => v.id.endsWith('@g.us')).map(v => v.id)
  let teks = `⬣ *LIST GROUP CHAT*\n\nTotal Group : ${anu.length} Group\n\n`
  for (let i of anu) {
- let metadata = await zets.groupMetadata(i)
+ let metadata = await client.groupMetadata(i)
  teks += `⌕ *Nama :* ${metadata.subject}\n⌕ *Owner :* @${metadata.owner.split('@')[0]}\n⌕ *ID :* ${metadata.id}\n⌕ *Dibuat :* ${moment(metadata.creation * 1000).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm:ss')}\n⌕ *Member :* ${metadata.participants.length}\n\n────────────────────────\n\n`
  }
- zets.sendTextWithMentions(m.chat, teks, m)
+ client.sendTextWithMentions(m.chat, teks, m)
  }
  break
  case 'listonline': case 'liston': {
 let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : m.chat
 let online = [...Object.keys(store.presences[id]), botNumber]
-zets.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⌕ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
+client.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⌕ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
  }
  break
 case 'sticker': case 's': case 'stickergif': case 'sgif': {
@@ -1385,12 +1380,12 @@ if (!quoted) throw `Balas Video/Image Dengan Caption ${prefix + command}`
 m.reply(mess.wait)
 if (/image/.test(mime)) {
 let media = await quoted.download()
-let encmedia = await zets.sendImageAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
+let encmedia = await client.sendImageAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
 await fs.unlinkSync(encmedia)
 } else if (/video/.test(mime)) {
 if ((quoted.msg || quoted).seconds > 11) return m.reply('Maksimal 10 detik!')
 let media = await quoted.download()
-let encmedia = await zets.sendVideoAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
+let encmedia = await client.sendVideoAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
 await fs.unlinkSync(encmedia)
 } else {
 throw `Kirim Gambar/Video Dengan Caption ${prefix + command}\nDurasi Video 1-9 Detik`
@@ -1418,7 +1413,7 @@ case 'emojimix': {
 		let [emoji1, emoji2] = text.split`+`
 		let anu = await fetchJson(`https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emoji1)}_${encodeURIComponent(emoji2)}`)
 		for (let res of anu.results) {
-		let encmedia = await zets.sendImageAsSticker(m.chat, res.url, m, { packname: global.packname, author: global.author, categories: res.tags })
+		let encmedia = await client.sendImageAsSticker(m.chat, res.url, m, { packname: global.packname, author: global.author, categories: res.tags })
 		await fs.unlinkSync(encmedia)
 		}
 	}
@@ -1427,13 +1422,13 @@ case 'toimage': case 'toimg': {
 if (!quoted) throw 'Reply Image'
 if (!/webp/.test(mime)) throw `balas stiker dengan caption *${prefix + command}*`
 m.reply(mess.wait)
-let media = await zets.downloadAndSaveMediaMessage(quoted)
+let media = await client.downloadAndSaveMediaMessage(quoted)
 let ran = await getRandom('.png')
 exec(`ffmpeg -i ${media} ${ran}`, (err) => {
 fs.unlinkSync(media)
 if (err) throw err
 let buffer = fs.readFileSync(ran)
-zets.sendMessage(m.chat, { image: buffer }, { quoted: m })
+client.sendMessage(m.chat, { image: buffer }, { quoted: m })
 fs.unlinkSync(ran)
 })
 }
@@ -1443,9 +1438,9 @@ if (!quoted) throw 'Reply Image'
 if (!/webp/.test(mime)) throw `balas stiker dengan caption *${prefix + command}*`
 m.reply(mess.wait)
 		let { webp2mp4File } = require('./lib/uploader')
-let media = await zets.downloadAndSaveMediaMessage(quoted)
+let media = await client.downloadAndSaveMediaMessage(quoted)
 let webpToMp4 = await webp2mp4File(media)
-await zets.sendMessage(m.chat, { video: { url: webpToMp4.result, caption: 'Convert Webp To Video' } }, { quoted: m })
+await client.sendMessage(m.chat, { video: { url: webpToMp4.result, caption: 'Convert Webp To Video' } }, { quoted: m })
 await fs.unlinkSync(media)
 }
 break
@@ -1456,7 +1451,7 @@ m.reply(mess.wait)
 let media = await quoted.download()
 let { toAudio } = require('./lib/converter')
 let audio = await toAudio(media, 'mp4')
-zets.sendMessage(m.chat, {audio: audio, mimetype: 'audio/mpeg'}, { quoted : m })
+client.sendMessage(m.chat, {audio: audio, mimetype: 'audio/mpeg'}, { quoted : m })
 }
 break
 case 'tomp3': {
@@ -1467,7 +1462,7 @@ m.reply(mess.wait)
 let media = await quoted.download()
 let { toAudio } = require('./lib/converter')
 let audio = await toAudio(media, 'mp4')
-zets.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${zets.user.name}.mp3`}, { quoted : m })
+client.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${client.user.name}.mp3`}, { quoted : m })
 }
 break
 case 'tovn': case 'toptt': {
@@ -1477,7 +1472,7 @@ m.reply(mess.wait)
 let media = await quoted.download()
 let { toPTT } = require('./lib/converter')
 let audio = await toPTT(media, 'mp4')
-zets.sendMessage(m.chat, {audio: audio, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
+client.sendMessage(m.chat, {audio: audio, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
 }
 break
 case 'togif': {
@@ -1485,16 +1480,16 @@ if (!quoted) throw 'Reply Image'
 if (!/webp/.test(mime)) throw `balas stiker dengan caption *${prefix + command}*`
 m.reply(mess.wait)
 		let { webp2mp4File } = require('./lib/uploader')
-let media = await zets.downloadAndSaveMediaMessage(quoted)
+let media = await client.downloadAndSaveMediaMessage(quoted)
 let webpToMp4 = await webp2mp4File(media)
-await zets.sendMessage(m.chat, { video: { url: webpToMp4.result, caption: 'Convert Webp To Video' }, gifPlayback: true }, { quoted: m })
+await client.sendMessage(m.chat, { video: { url: webpToMp4.result, caption: 'Convert Webp To Video' }, gifPlayback: true }, { quoted: m })
 await fs.unlinkSync(media)
 }
 break
 	case 'tourl': {
 m.reply(mess.wait)
 		let { UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
-let media = await zets.downloadAndSaveMediaMessage(quoted)
+let media = await client.downloadAndSaveMediaMessage(quoted)
 if (/image/.test(mime)) {
 let anu = await TelegraPh(media)
 m.reply(util.format(anu))
@@ -1513,7 +1508,7 @@ case 'imagenobg': case 'removebg': case 'remove-bg': {
 	let apirnobg = ['q61faXzzR5zNU6cvcrwtUkRU','S258diZhcuFJooAtHTaPEn4T','5LjfCVAp4vVNYiTjq9mXJWHF','aT7ibfUsGSwFyjaPZ9eoJc61','BY63t7Vx2tS68YZFY6AJ4HHF','5Gdq1sSWSeyZzPMHqz7ENfi8','86h6d6u4AXrst4BVMD9dzdGZ','xp8pSDavAgfE5XScqXo9UKHF','dWbCoCb3TacCP93imNEcPxcL']
 	let apinobg = apirnobg[Math.floor(Math.random() * apirnobg.length)]
 	hmm = await './src/remobg-'+getRandom('')
-	localFile = await zets.downloadAndSaveMediaMessage(quoted, hmm)
+	localFile = await client.downloadAndSaveMediaMessage(quoted, hmm)
 	outputFile = await './src/hremo-'+getRandom('.png')
 	m.reply(mess.wait)
 	remobg.removeBackgroundFromImageFile({
@@ -1524,7 +1519,7 @@ case 'imagenobg': case 'removebg': case 'remove-bg': {
 	  scale: "100%",
 	  outputFile 
 	}).then(async result => {
-	zets.sendMessage(m.chat, {image: fs.readFileSync(outputFile), caption: mess.success}, { quoted : m })
+	client.sendMessage(m.chat, {image: fs.readFileSync(outputFile), caption: mess.success}, { quoted : m })
 	await fs.unlinkSync(localFile)
 	await fs.unlinkSync(outputFile)
 	})
@@ -1539,7 +1534,7 @@ case 'yts': case 'ytsearch': {
                 for (let i of search.all) {
                     teks += `⭔ No : ${no++}\n⭔ Type : ${i.type}\n⭔ Video ID : ${i.videoId}\n⭔ Title : ${i.title}\n⭔ Views : ${i.views}\n⭔ Duration : ${i.timestamp}\n⭔ Upload At : ${i.ago}\n⭔ Author : ${i.author.name}\n⭔ Url : ${i.url}\n\n─────────────────\n\n`
                 }
-                zets.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
+                client.sendMessage(m.chat, { image: { url: search.all[0].thumbnail },  caption: teks }, { quoted: m })
             }
             break
 case 'google': {
@@ -1570,11 +1565,11 @@ image: { url: images },
 caption: `*-------「 GIMAGE SEARCH 」-------*
 🤠 *Query* : ${text}
 🔗 *Media Url* : ${images}`,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttons,
 headerType: 4
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 })
 }
 break
@@ -1596,7 +1591,7 @@ var total = 0
 for (let o of _cmd) {
   total = total + o.count
 }
-var teks = `*ZETS BOT DASHBOARD*\n\n*HIT*\n• GLOBAL : ${total}\n• USER : ${totalUser}\n\n`
+var teks = `*client BOT DASHBOARD*\n\n*HIT*\n• GLOBAL : ${total}\n• USER : ${totalUser}\n\n`
 teks += `*Most Command Global*\n`
 for (let u = 0; u < jumlahCmd; u ++) {
   teks += `• ${_cmd[u].nama} : ${_cmd[u].count}\n`
@@ -1633,7 +1628,7 @@ break
                     buttons: buttons,
                     headerType: 4
                 }
-                zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+                client.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
             break
 	case 'ytmp3': case 'ytaudio': {
@@ -1643,8 +1638,8 @@ if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFM
 let quality = args[1] ? args[1] : '128kbps'
 let media = await yta(text, quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
-zets.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${isUrl(text)}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
-zets.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+client.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${isUrl(text)}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
+client.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
 }
 break
 case 'ytmp4': case 'ytvideo': {
@@ -1654,7 +1649,7 @@ if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFM
 let quality = args[1] ? args[1] : '360p'
 let media = await ytv(text, quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
-zets.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${isUrl(text)}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
+client.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${isUrl(text)}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
 }
 break
 	case 'getmusic': {
@@ -1667,8 +1662,8 @@ if (!urls) throw `Mungkin pesan yang anda reply tidak mengandung result ytsearch
 let quality = args[1] ? args[1] : '128kbps'
 let media = await yta(urls[text - 1], quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
-zets.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${urls[text - 1]}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
-zets.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+client.sendImage(m.chat, media.thumb, `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${urls[text - 1]}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '128kbps'}`, m)
+client.sendMessage(m.chat, { document: await getBuffer(media.dl_link), mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
 }
 break
 case 'getvideo': {
@@ -1681,7 +1676,7 @@ if (!urls) throw `Mungkin pesan yang anda reply tidak mengandung result ytsearch
 let quality = args[1] ? args[1] : '360p'
 let media = await ytv(urls[text - 1], quality)
 if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
-zets.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${urls[text - 1]}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
+client.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⌕ Title : ${media.title}\n⌕ File Size : ${media.filesizeF}\n⌕ Url : ${urls[text - 1]}\n⌕ Ext : MP3\n⌕ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
 }
 break
 case 'pinterest': {
@@ -1696,24 +1691,24 @@ let buttons = [
 let buttonMessage = {
 image: { url: result },
 caption: `*Klik Next Untuk Melanjutkan*`,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttons,
 headerType: 4
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 case 'anime': case 'waifu': case 'husbu': case 'neko': case 'shinobu': case 'megumin': case 'waifus': case 'nekos': case 'trap': case 'blowjob': {
 m.reply(mess.wait)
-zets.sendMessage(m.chat, { image: { url: api('zenz', '/api/random/'+command, {}, 'apikey') }, caption: 'Generate Random ' + command }, { quoted: m })
+client.sendMessage(m.chat, { image: { url: api('zenz', '/api/random/'+command, {}, 'apikey') }, caption: 'Generate Random ' + command }, { quoted: m })
 }
 break
 	case 'couple': {
 m.reply(mess.wait)
 let anu = await fetchJson('https://raw.githubusercontent.com/iamriz7/kopel_/main/kopel.json')
 let random = anu[Math.floor(Math.random() * anu.length)]
-zets.sendMessage(m.chat, { image: { url: random.male }, caption: `Couple Male` }, { quoted: m })
-zets.sendMessage(m.chat, { image: { url: random.female }, caption: `Couple Female` }, { quoted: m })
+client.sendMessage(m.chat, { image: { url: random.male }, caption: `Couple Male` }, { quoted: m })
+client.sendMessage(m.chat, { image: { url: random.female }, caption: `Couple Female` }, { quoted: m })
 }
 	break
 case 'coffe': case 'kopi': {
@@ -1723,11 +1718,11 @@ let buttons = [
 let buttonMessage = {
 image: { url: 'https://coffee.alexflipnote.dev/random' },
 caption: `☕ Random Coffe`,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttons,
 headerType: 4
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 case 'wallpaper': {
@@ -1741,11 +1736,11 @@ result = anu[Math.floor(Math.random() * anu.length)]
 let buttonMessage = {
 image: { url: result.image[0] },
 caption: `⌕ Title : ${result.title}\n⌕ Category : ${result.type}\n⌕ Detail : ${result.source}\n⌕ Media Url : ${result.image[2] || result.image[1] || result.image[0]}`,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttons,
 headerType: 4
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 case 'wikimedia': {
@@ -1759,11 +1754,11 @@ let buttons = [
 let buttonMessage = {
 image: { url: result.image },
 caption: `⌕ Title : ${result.title}\n⌕ Source : ${result.source}\n⌕ Media Url : ${result.image}`,
-footer: zets.user.name,
+footer: client.user.name,
 buttons: buttons,
 headerType: 4
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 case 'quotesanime': case 'quoteanime': {
@@ -1779,7 +1774,7 @@ footer: 'Press The Button Below',
 buttons: buttons,
 headerType: 2
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 	case 'motivasi': case 'dilanquote': case 'bucinquote': case 'katasenja': case 'puisi': {
@@ -1793,7 +1788,7 @@ footer: 'Press The Button Below',
 buttons: buttons,
 headerType: 2
 }
-zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+client.sendMessage(m.chat, buttonMessage, { quoted: m })
 }
 break
 
@@ -1803,7 +1798,7 @@ case 'neon': case 'snowtext': case 'cloudtext': case '3dluxury': case '3dgradien
 if (!text) throw `Example : ${prefix + command} text`
 m.reply(mess.wait)
 anu = await getBuffer(`https://xteam.xyz/textpro/${command}?text=${text}&APIKEY=${global.xteam}`)
-zets.sendMessage(m.chat, { image: anu, caption: `Text Pro ${command}` }, { quoted: m}).catch((err) => m.reply('Maaf server Xteam sedang down'))
+client.sendMessage(m.chat, { image: anu, caption: `Text Pro ${command}` }, { quoted: m}).catch((err) => m.reply('Maaf server Xteam sedang down'))
 	}
 break
 
@@ -1813,14 +1808,14 @@ break
 if (!Number(text)) throw `Example : ${prefix + command} 6288292024190`
 let anu = await primbon.nomer_hoki(Number(text))
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nomor HP :* ${anu.message.nomer_hp}\n⌕ *Angka Shuzi :* ${anu.message.angka_shuzi}\n⌕ *Energi Positif :*\n- Kekayaan : ${anu.message.energi_positif.kekayaan}\n- Kesehatan : ${anu.message.energi_positif.kesehatan}\n- Cinta : ${anu.message.energi_positif.cinta}\n- Kestabilan : ${anu.message.energi_positif.kestabilan}\n- Persentase : ${anu.message.energi_positif.persentase}\n⌕ *Energi Negatif :*\n- Perselisihan : ${anu.message.energi_negatif.perselisihan}\n- Kehilangan : ${anu.message.energi_negatif.kehilangan}\n- Malapetaka : ${anu.message.energi_negatif.malapetaka}\n- Kehancuran : ${anu.message.energi_negatif.kehancuran}\n- Persentase : ${anu.message.energi_negatif.persentase}`, m)
+client.sendText(m.chat, `⌕ *Nomor HP :* ${anu.message.nomer_hp}\n⌕ *Angka Shuzi :* ${anu.message.angka_shuzi}\n⌕ *Energi Positif :*\n- Kekayaan : ${anu.message.energi_positif.kekayaan}\n- Kesehatan : ${anu.message.energi_positif.kesehatan}\n- Cinta : ${anu.message.energi_positif.cinta}\n- Kestabilan : ${anu.message.energi_positif.kestabilan}\n- Persentase : ${anu.message.energi_positif.persentase}\n⌕ *Energi Negatif :*\n- Perselisihan : ${anu.message.energi_negatif.perselisihan}\n- Kehilangan : ${anu.message.energi_negatif.kehilangan}\n- Malapetaka : ${anu.message.energi_negatif.malapetaka}\n- Kehancuran : ${anu.message.energi_negatif.kehancuran}\n- Persentase : ${anu.message.energi_negatif.persentase}`, m)
 }
 break
 case 'artimimpi': case 'tafsirmimpi': {
 if (!text) throw `Example : ${prefix + command} belanja`
 let anu = await primbon.tafsir_mimpi(text)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Mimpi :* ${anu.message.mimpi}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Solusi :* ${anu.message.solusi}`, m)
+client.sendText(m.chat, `⌕ *Mimpi :* ${anu.message.mimpi}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Solusi :* ${anu.message.solusi}`, m)
 }
 break
 case 'ramalanjodoh': case 'ramaljodoh': {
@@ -1828,7 +1823,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005, Novia, 16, 11,
 let [nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2] = text.split`,`
 let anu = await primbon.ramalan_jodoh(nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'ramalanjodohbali': case 'ramaljodohbali': {
@@ -1836,7 +1831,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005, Novia, 16, 11,
 let [nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2] = text.split`,`
 let anu = await primbon.ramalan_jodoh_bali(nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'suamiistri': {
@@ -1844,7 +1839,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005, Novia, 16, 11,
 let [nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2] = text.split`,`
 let anu = await primbon.suami_istri(nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama Suami :* ${anu.message.suami.nama}\n⌕ *Lahir Suami :* ${anu.message.suami.tgl_lahir}\n⌕ *Nama Istri :* ${anu.message.istri.nama}\n⌕ *Lahir Istri :* ${anu.message.istri.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama Suami :* ${anu.message.suami.nama}\n⌕ *Lahir Suami :* ${anu.message.suami.tgl_lahir}\n⌕ *Nama Istri :* ${anu.message.istri.nama}\n⌕ *Lahir Istri :* ${anu.message.istri.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'ramalancinta': case 'ramalcinta': {
@@ -1852,14 +1847,14 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005, Novia, 16, 11,
 let [nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2] = text.split`,`
 let anu = await primbon.ramalan_cinta(nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Sisi Positif :* ${anu.message.sisi_positif}\n⌕ *Sisi Negatif :* ${anu.message.sisi_negatif}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama Anda :* ${anu.message.nama_anda.nama}\n⌕ *Lahir Anda :* ${anu.message.nama_anda.tgl_lahir}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan.nama}\n⌕ *Lahir Pasangan :* ${anu.message.nama_pasangan.tgl_lahir}\n⌕ *Sisi Positif :* ${anu.message.sisi_positif}\n⌕ *Sisi Negatif :* ${anu.message.sisi_negatif}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'artinama': {
 if (!text) throw `Example : ${prefix + command} Dika Ardianta`
 let anu = await primbon.arti_nama(text)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'kecocokannama': case 'cocoknama': {
@@ -1867,7 +1862,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005`
 let [nama, tgl, bln, thn] = text.split`,`
 let anu = await primbon.kecocokan_nama(nama, tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Life Path :* ${anu.message.life_path}\n⌕ *Destiny :* ${anu.message.destiny}\n⌕ *Destiny Desire :* ${anu.message.destiny_desire}\n⌕ *Personality :* ${anu.message.personality}\n⌕ *Persentase :* ${anu.message.persentase_kecocokan}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Life Path :* ${anu.message.life_path}\n⌕ *Destiny :* ${anu.message.destiny}\n⌕ *Destiny Desire :* ${anu.message.destiny_desire}\n⌕ *Personality :* ${anu.message.personality}\n⌕ *Persentase :* ${anu.message.persentase_kecocokan}`, m)
 }
 break
 case 'kecocokanpasangan': case 'cocokpasangan': case 'pasangan': {
@@ -1875,7 +1870,7 @@ if (!text) throw `Example : ${prefix + command} Dika|Novia`
 let [nama1, nama2] = text.split`|`
 let anu = await primbon.kecocokan_nama_pasangan(nama1, nama2)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendImage(m.chat,  anu.message.gambar, `⌕ *Nama Anda :* ${anu.message.nama_anda}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan}\n⌕ *Sisi Positif :* ${anu.message.sisi_positif}\n⌕ *Sisi Negatif :* ${anu.message.sisi_negatif}`, m)
+client.sendImage(m.chat,  anu.message.gambar, `⌕ *Nama Anda :* ${anu.message.nama_anda}\n⌕ *Nama Pasangan :* ${anu.message.nama_pasangan}\n⌕ *Sisi Positif :* ${anu.message.sisi_positif}\n⌕ *Sisi Negatif :* ${anu.message.sisi_negatif}`, m)
 }
 break
 case 'jadianpernikahan': case 'jadiannikah': {
@@ -1883,7 +1878,7 @@ if (!text) throw `Example : ${prefix + command} 6, 12, 2020`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.tanggal_jadian_pernikahan(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Tanggal Pernikahan :* ${anu.message.tanggal}\n⌕ *karakteristik :* ${anu.message.karakteristik}`, m)
+client.sendText(m.chat, `⌕ *Tanggal Pernikahan :* ${anu.message.tanggal}\n⌕ *karakteristik :* ${anu.message.karakteristik}`, m)
 }
 break
 case 'sifatusaha': {
@@ -1891,7 +1886,7 @@ if (!ext)throw `Example : ${prefix+ command} 28, 12, 2021`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.sifat_usaha_bisnis(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Usaha :* ${anu.message.usaha}`, m)
+client.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Usaha :* ${anu.message.usaha}`, m)
 }
 break
 case 'rejeki': case 'rezeki': {
@@ -1899,7 +1894,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.rejeki_hoki_weton(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Rezeki :* ${anu.message.rejeki}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Rezeki :* ${anu.message.rejeki}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'pekerjaan': case 'kerja': {
@@ -1907,7 +1902,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.pekerjaan_weton_lahir(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Pekerjaan :* ${anu.message.pekerjaan}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Lahir :* ${anu.message.hari_lahir}\n⌕ *Pekerjaan :* ${anu.message.pekerjaan}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'ramalannasib': case 'ramalnasib': case 'nasib': {
@@ -1915,7 +1910,7 @@ if (!text) throw `Example : 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.ramalan_nasib(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Analisa :* ${anu.message.analisa}\n⌕ *Angka Akar :* ${anu.message.angka_akar}\n⌕ *Sifat :* ${anu.message.sifat}\n⌕ *Elemen :* ${anu.message.elemen}\n⌕ *Angka Keberuntungan :* ${anu.message.angka_keberuntungan}`, m)
+client.sendText(m.chat, `⌕ *Analisa :* ${anu.message.analisa}\n⌕ *Angka Akar :* ${anu.message.angka_akar}\n⌕ *Sifat :* ${anu.message.sifat}\n⌕ *Elemen :* ${anu.message.elemen}\n⌕ *Angka Keberuntungan :* ${anu.message.angka_keberuntungan}`, m)
 }
 break
 case 'potensipenyakit': case 'penyakit': {
@@ -1923,7 +1918,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.cek_potensi_penyakit(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Analisa :* ${anu.message.analisa}\n⌕ *Sektor :* ${anu.message.sektor}\n⌕ *Elemen :* ${anu.message.elemen}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Analisa :* ${anu.message.analisa}\n⌕ *Sektor :* ${anu.message.sektor}\n⌕ *Elemen :* ${anu.message.elemen}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'artitarot': case 'tarot': {
@@ -1931,7 +1926,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.arti_kartu_tarot(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendImage(m.chat, anu.message.image, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Simbol Tarot :* ${anu.message.simbol_tarot}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendImage(m.chat, anu.message.image, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Simbol Tarot :* ${anu.message.simbol_tarot}\n⌕ *Arti :* ${anu.message.arti}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'fengshui': {
@@ -1939,7 +1934,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 1, 2005\n\nNote : ${prefix
 let [nama, gender, tahun] = text.split`,`
 let anu = await primbon.perhitungan_feng_shui(nama, gender, tahun)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tahun_lahir}\n⌕ *Gender :* ${anu.message.jenis_kelamin}\n⌕ *Angka Kua :* ${anu.message.angka_kua}\n⌕ *Kelompok :* ${anu.message.kelompok}\n⌕ *Karakter :* ${anu.message.karakter}\n⌕ *Sektor Baik :* ${anu.message.sektor_baik}\n⌕ *Sektor Buruk :* ${anu.message.sektor_buruk}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tahun_lahir}\n⌕ *Gender :* ${anu.message.jenis_kelamin}\n⌕ *Angka Kua :* ${anu.message.angka_kua}\n⌕ *Kelompok :* ${anu.message.kelompok}\n⌕ *Karakter :* ${anu.message.karakter}\n⌕ *Sektor Baik :* ${anu.message.sektor_baik}\n⌕ *Sektor Buruk :* ${anu.message.sektor_buruk}`, m)
 }
 break
 case 'haribaik': {
@@ -1947,7 +1942,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.petung_hari_baik(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Kala Tinantang :* ${anu.message.kala_tinantang}\n⌕ *Info :* ${anu.message.info}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Kala Tinantang :* ${anu.message.kala_tinantang}\n⌕ *Info :* ${anu.message.info}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'harisangar': case 'taliwangke': {
@@ -1955,7 +1950,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.hari_sangar_taliwangke(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Info :* ${anu.message.info}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Info :* ${anu.message.info}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'harinaas': case 'harisial': {
@@ -1963,7 +1958,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.primbon_hari_naas(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *Tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hari Naas :* ${anu.message.hari_naas}\n⌕ *Info :* ${anu.message.catatan}\n⌕ *Catatan :* ${anu.message.info}`, m)
+client.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *Tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hari Naas :* ${anu.message.hari_naas}\n⌕ *Info :* ${anu.message.catatan}\n⌕ *Catatan :* ${anu.message.info}`, m)
 }
 break
 case 'nagahari': case 'harinaga': {
@@ -1971,7 +1966,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.rahasia_naga_hari(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *Tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Arah Naga Hari :* ${anu.message.arah_naga_hari}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *Tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Arah Naga Hari :* ${anu.message.arah_naga_hari}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'arahrejeki': case 'arahrezeki': {
@@ -1979,7 +1974,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.primbon_arah_rejeki(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Arah Rezeki :* ${anu.message.arah_rejeki}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Hari Lahir :* ${anu.message.hari_lahir}\n⌕ *tanggal Lahir :* ${anu.message.tgl_lahir}\n⌕ *Arah Rezeki :* ${anu.message.arah_rejeki}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'peruntungan': {
@@ -1987,7 +1982,7 @@ if (!text) throw `Example : ${prefix + command} DIka, 7, 7, 2005, 2022\n\nNote :
 let [nama, tgl, bln, thn, untuk] = text.split`,`
 let anu = await primbon.ramalan_peruntungan(nama, tgl, bln, thn, untuk)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Peruntungan Tahun :* ${anu.message.peruntungan_tahun}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Peruntungan Tahun :* ${anu.message.peruntungan_tahun}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'weton': case 'wetonjawa': {
@@ -1995,7 +1990,7 @@ if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.weton_jawa(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Tanggal :* ${anu.message.tanggal}\n⌕ *Jumlah Neptu :* ${anu.message.jumlah_neptu}\n⌕ *Watak Hari :* ${anu.message.watak_hari}\n⌕ *Naga Hari :* ${anu.message.naga_hari}\n⌕ *Jam Baik :* ${anu.message.jam_baik}\n⌕ *Watak Kelahiran :* ${anu.message.watak_kelahiran}`, m)
+client.sendText(m.chat, `⌕ *Tanggal :* ${anu.message.tanggal}\n⌕ *Jumlah Neptu :* ${anu.message.jumlah_neptu}\n⌕ *Watak Hari :* ${anu.message.watak_hari}\n⌕ *Naga Hari :* ${anu.message.naga_hari}\n⌕ *Jam Baik :* ${anu.message.jam_baik}\n⌕ *Watak Kelahiran :* ${anu.message.watak_kelahiran}`, m)
 }
 break
 case 'sifat': case 'karakter': {
@@ -2003,7 +1998,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005`
 let [nama, tgl, bln, thn] = text.split`,`
 let anu = await primbon.sifat_karakter_tanggal_lahir(nama, tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Garis Hidup :* ${anu.message.garis_hidup}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Garis Hidup :* ${anu.message.garis_hidup}`, m)
 }
 break
 case 'keberuntungan': {
@@ -2011,7 +2006,7 @@ if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005`
 let [nama, tgl, bln, thn] = text.split`,`
 let anu = await primbon.potensi_keberuntungan(nama, tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}`, m)
+client.sendText(m.chat, `⌕ *Nama :* ${anu.message.nama}\n⌕ *Lahir :* ${anu.message.tgl_lahir}\n⌕ *Hasil :* ${anu.message.result}`, m)
 }
 break
 case 'memancing': {
@@ -2019,7 +2014,7 @@ if (!text) throw `Example : ${prefix + command} 12, 1, 2022`
 let [tgl, bln, thn] = text.split`,`
 let anu = await primbon.primbon_memancing_ikan(tgl, bln, thn)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Tanggal :* ${anu.message.tgl_memancing}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Tanggal :* ${anu.message.tgl_memancing}\n⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'masasubur': {
@@ -2027,7 +2022,7 @@ if (!text) throw `Example : ${prefix + command} 12, 1, 2022, 28\n\nNote : ${pref
 let [tgl, bln, thn, siklus] = text.split`,`
 let anu = await primbon.masa_subur(tgl, bln, thn, siklus)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Hasil :* ${anu.message.result}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'zodiak': case 'zodiac': {
@@ -2062,14 +2057,14 @@ let zodiac = await getZodiac(birth[1], birth[2])
 
 let anu = await primbon.zodiak(zodiac)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Zodiak :* ${anu.message.zodiak}\n⌕ *Nomor :* ${anu.message.nomor_keberuntungan}\n⌕ *Aroma :* ${anu.message.aroma_keberuntungan}\n⌕ *Planet :* ${anu.message.planet_yang_mengitari}\n⌕ *Bunga :* ${anu.message.bunga_keberuntungan}\n⌕ *Warna :* ${anu.message.warna_keberuntungan}\n⌕ *Batu :* ${anu.message.batu_keberuntungan}\n⌕ *Elemen :* ${anu.message.elemen_keberuntungan}\n⌕ *Pasangan Zodiak :* ${anu.message.pasangan_zodiak}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
+client.sendText(m.chat, `⌕ *Zodiak :* ${anu.message.zodiak}\n⌕ *Nomor :* ${anu.message.nomor_keberuntungan}\n⌕ *Aroma :* ${anu.message.aroma_keberuntungan}\n⌕ *Planet :* ${anu.message.planet_yang_mengitari}\n⌕ *Bunga :* ${anu.message.bunga_keberuntungan}\n⌕ *Warna :* ${anu.message.warna_keberuntungan}\n⌕ *Batu :* ${anu.message.batu_keberuntungan}\n⌕ *Elemen :* ${anu.message.elemen_keberuntungan}\n⌕ *Pasangan Zodiak :* ${anu.message.pasangan_zodiak}\n⌕ *Catatan :* ${anu.message.catatan}`, m)
 }
 break
 case 'shio': {
 if (!text) throw `Example : ${prefix + command} tikus\n\nNote : For Detail https://primbon.com/shio.htm`
 let anu = await primbon.shio(text)
 if (anu.status == false) return m.reply(anu.message)
-zets.sendText(m.chat, `⌕ *Hasil :* ${anu.message}`, m)
+client.sendText(m.chat, `⌕ *Hasil :* ${anu.message}`, m)
 }
 break
 	case 'stalker': case 'stalk': {
@@ -2111,7 +2106,7 @@ m.reply(`ID : ${anu.result.gameId}\nUsername : ${anu.result.userName}`)
 if (!id) throw `No Query username, Example : ${prefix + command} ig cak_haho`
 let { result: anu } = await fetchJson(api('zenz', '/api/stalker/ig', { username: id }, 'apikey'))
 if (anu.status == false) return m.reply(anu.result.message)
-zets.sendMedia(m.chat, anu.caption.profile_hd, '', `⌕ Full Name : ${anu.caption.full_name}\n⌕ User Name : ${anu.caption.user_name}\n⌕ ID ${anu.caption.user_id}\n⌕ Followers : ${anu.caption.followers}\n⌕ Following : ${anu.caption.following}\n⌕ Bussines : ${anu.caption.bussines}\n⌕ Profesional : ${anu.caption.profesional}\n⌕ Verified : ${anu.caption.verified}\n⌕ Private : ${anu.caption.private}\n⌕ Bio : ${anu.caption.biography}\n⌕ Bio Url : ${anu.caption.bio_url}`, m)
+client.sendMedia(m.chat, anu.caption.profile_hd, '', `⌕ Full Name : ${anu.caption.full_name}\n⌕ User Name : ${anu.caption.user_name}\n⌕ ID ${anu.caption.user_id}\n⌕ Followers : ${anu.caption.followers}\n⌕ Following : ${anu.caption.following}\n⌕ Bussines : ${anu.caption.bussines}\n⌕ Profesional : ${anu.caption.profesional}\n⌕ Verified : ${anu.caption.verified}\n⌕ Private : ${anu.caption.private}\n⌕ Bio : ${anu.caption.biography}\n⌕ Bio Url : ${anu.caption.bio_url}`, m)
 		db.data.users[m.sender].limit -= 1
 } else if (type.toLowerCase() == 'npm') {
 if (!id) throw `No Query username, Example : ${prefix + command} npm scrape-primbon`
@@ -2131,11 +2126,11 @@ case 'tiktok': {
 if (!text) throw 'Masukkan Query Link!'
 m.reply(mess.wait)
 hx.ttdownloader(q).then( data => {
-zets.sendMessage(m.chat, {
+client.sendMessage(m.chat, {
 video: { url: data.wm },
 caption: `Kamu bisa mengubahnya menjadi Vidio Tanpa Watermark atau Audio, pencet tombol dibawah untuk mengubahnya!`,
 buttons: [{buttonId: `${prefix}ttnowm ${args[0]} ${m.sender}`, buttonText: { displayText: "Tiktok Nowm" }, type: 1 }],
-footer: "Untuk Mengubah Ke Audio Gunakan Manual #tiktokaudio [link]"
+footer: "Untuk Mengubah Ke Audio Gunakan Manual #tiktokaudio *link*"
 }, { quoted: m })
 })
 }
@@ -2145,7 +2140,7 @@ case 'ttnowm':
 if (!text) throw 'Masukkan Query Link!'
 m.reply(mess.wait)
 hx.ttdownloader(q).then( data => {
-zets.sendMessage(m.chat, { video: { url: data.nowm }, mimetype: 'video/mp4' }, { quoted: m })
+client.sendMessage(m.chat, { video: { url: data.nowm }, mimetype: 'video/mp4' }, { quoted: m })
 })
 	break
 
@@ -2153,7 +2148,7 @@ case 'ttaudio':
 if (!text) throw 'Masukkan Query Link!'
 m.reply(mess.wait)
 hx.ttdownloader(q).then( data => {
-zets.sendMessage(m.chat, { audio: { url: data.nowm }, mimetype: 'audio/mp4' }, { quoted: m })
+client.sendMessage(m.chat, { audio: { url: data.nowm }, mimetype: 'audio/mp4' }, { quoted: m })
 })
 	break
 
@@ -2167,10 +2162,10 @@ let urlnya = text
 		for(let i of result.medias){
 			if(i.url.includes('mp4')){
 				let link = await getBuffer(i.url)
-zets.sendMessage(m.chat, { video: link, }, { quoted: m })
+client.sendMessage(m.chat, { video: link, }, { quoted: m })
 } else {
 let link = await getBuffer(i.url)
-  zets.sendMessage(m.chat, { image: link, }, { quoted: m })  
+  client.sendMessage(m.chat, { image: link, }, { quoted: m })  
 }
 }
 }).catch((err) => m.reply(`Server eror`))
@@ -2185,10 +2180,10 @@ m.reply(mess.wait)
 		for(let i of result.medias){
 			if(i.url.includes('mp4')){
 				let link = await getBuffer(i.url)
-zets.sendMessage(m.chat, { video: link, }, { quoted: m })
+client.sendMessage(m.chat, { video: link, }, { quoted: m })
 } else {
 let link = await getBuffer(i.url)
-  zets.sendMessage(m.chat, { image: link, }, { quoted: m })  
+  client.sendMessage(m.chat, { image: link, }, { quoted: m })  
 }
 }
 }).catch((err) => m.reply(`Sorry the username was not found`))
@@ -2199,8 +2194,8 @@ case 'joox': case 'jooxdl': {
 if (!text) throw 'No Query Title'
 m.reply(mess.wait)
 let anu = await fetchJson(`https://api.lolhuman.xyz/api/jooxplay?apikey=${global.lolhuman}&query=${text}`)
-let msg = await zets.sendImage(m.chat, anu.result.image, `⌕ Title : ${anu.result.info.song}\n⌕ Album : ${anu.result.info.album}\n⌕ Singer : ${anu.result.info.song}\n⌕ Publish : ${anu.result.info.date}\n⌕ Lirik :\n${anu.result.audio[0].link}`, m)
-zets.sendMessage(m.chat, { audio: { url: anu.result.audio[0].link }, mimetype: 'audio/mpeg' }, { quoted: msg })
+let msg = await client.sendImage(m.chat, anu.result.image, `⌕ Title : ${anu.result.info.song}\n⌕ Album : ${anu.result.info.album}\n⌕ Singer : ${anu.result.info.song}\n⌕ Publish : ${anu.result.info.date}\n⌕ Lirik :\n${anu.result.audio[0].link}`, m)
+client.sendMessage(m.chat, { audio: { url: anu.result.audio[0].link }, mimetype: 'audio/mpeg' }, { quoted: msg })
 }
 break
 
@@ -2216,7 +2211,7 @@ txt += `*• Type :* ${data.medias[1].extension}\n`
 txt += `*• Size :* ${data.medias[1].formattedSize}\n`
 txt += `*• Url Source :* ${data.url}\n\n`
 txt += `*Halo Kak ${pushname} Bot Telah Mendapatkan Title Tersebut Silahkan Tunggu Beberapa Menit, Jangan Lupa Donasi Ya Kak*`
-zets.sendMessage(m.chat, { video: { url: data.medias[1].url }, caption: `${txt}`}, { quoted: m })
+client.sendMessage(m.chat, { video: { url: data.medias[1].url }, caption: `${txt}`}, { quoted: m })
 }).catch((err) => {
 m.reply(`*Gagal Saat mendownload media dan mengirm video*`)
 })
@@ -2242,14 +2237,14 @@ let { umma } = require('./lib) scraper')
 ⌕ Url : ${anu.media[0]}
 Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan command ytmp3/ytmp4 dengan url diatas
 `,
-			footer: zets.user.name,
+			footer: client.user.name,
 			buttons,
 			headerType: 4
 		}
-		zets.sendMessage(m.chat, buttonMessage, { quoted: m })
+		client.sendMessage(m.chat, buttonMessage, { quoted: m })
 		} else if (anu.type == 'image') {
 		anu.media.map(async (url) => {
-		zets.sendMessage(m.chat, { image: { url }, caption: `⌕ Title : ${anu.title}\n⌕ Author : ${anu.author.name}\n⌕ Like : ${anu.like}\n⌕ Caption : ${anu.caption}` }, { quoted: m })
+		client.sendMessage(m.chat, { image: { url }, caption: `⌕ Title : ${anu.title}\n⌕ Author : ${anu.author.name}\n⌕ Like : ${anu.like}\n⌕ Caption : ${anu.caption}` }, { quoted: m })
 		})
 		}
 	}
@@ -2262,29 +2257,29 @@ case 'ringtone': {
 let { ringtone } = require('./lib/scraper')
 		let anu = await ringtone(text)
 		let result = anu[Math.floor(Math.random() * anu.length)]
-		zets.sendMessage(m.chat, { audio: { url: result.audio }, fileName: result.title+'.mp3', mimetype: 'audio/mpeg' }, { quoted: m })
+		client.sendMessage(m.chat, { audio: { url: result.audio }, fileName: result.title+'.mp3', mimetype: 'audio/mpeg' }, { quoted: m })
 	}
 	break
 		case 'iqra': {
 		oh = `Example : ${prefix + command} 3\n\nIQRA Yang tersedia : 1,2,3,4,5,6`
 		if (!text) throw oh
 		yy = await getBuffer(`https://islamic-api-indonesia.herokuapp.com/api/data/pdf/iqra${text}`)
-		zets.sendMessage(m.chat, {document: yy, mimetype: 'application/pdf', fileName: `iqra${text}.pdf`}, {quoted:m}).catch ((err) => m.reply(oh))
+		client.sendMessage(m.chat, {document: yy, mimetype: 'application/pdf', fileName: `iqra${text}.pdf`}, {quoted:m}).catch ((err) => m.reply(oh))
 		}
 		break
 		case 'juzamma': {
 		if (args[0] === 'pdf') {
 		m.reply(mess.wait)
-		zets.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pdf'}, mimetype: 'application/pdf', fileName: 'juz-amma-arab-latin-indonesia.pdf'}, {quoted:m})
+		client.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pdf'}, mimetype: 'application/pdf', fileName: 'juz-amma-arab-latin-indonesia.pdf'}, {quoted:m})
 		} else if (args[0] === 'docx') {
 		m.reply(mess.wait)
-		zets.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.docx'}, mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', fileName: 'juz-amma-arab-latin-indonesia.docx'}, {quoted:m})
+		client.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.docx'}, mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', fileName: 'juz-amma-arab-latin-indonesia.docx'}, {quoted:m})
 		} else if (args[0] === 'pptx') {
 		m.reply(mess.wait)
-		zets.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pptx'}, mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', fileName: 'juz-amma-arab-latin-indonesia.pptx'}, {quoted:m})
+		client.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pptx'}, mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', fileName: 'juz-amma-arab-latin-indonesia.pptx'}, {quoted:m})
 		} else if (args[0] === 'xlsx') {
 		m.reply(mess.wait)
-		zets.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx'}, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileName: 'juz-amma-arab-latin-indonesia.xlsx'}, {quoted:m})
+		client.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx'}, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileName: 'juz-amma-arab-latin-indonesia.xlsx'}, {quoted:m})
 		} else {
 		m.reply(`Mau format apa ? Example : ${prefix + command} pdf
 
@@ -2338,7 +2333,7 @@ ${id}`)
 
 ( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
 		m.reply(txt)
-		zets.sendMessage(m.chat, {audio: { url: res.result.data.audio.primary }, mimetype: 'audio/mpeg'}, { quoted : m })
+		client.sendMessage(m.chat, {audio: { url: res.result.data.audio.primary }, mimetype: 'audio/mpeg'}, { quoted : m })
 		}
 		break
 		case 'tafsirsurah': {
@@ -2375,13 +2370,13 @@ if (/smooth/.test(command)) set = '-filter:v "minterpolate=\'mi_mode=mci:mc_mode
 if (/tupai/.test(command)) set = '-filter:a "atempo=0.5,asetrate=65100"'
 if (/audio/.test(mime)) {
 m.reply(mess.wait)
-let media = await zets.downloadAndSaveMediaMessage(quoted)
+let media = await client.downloadAndSaveMediaMessage(quoted)
 let ran = getRandom('.mp3')
 exec(`ffmpeg -i ${media} ${set} ${ran}`, (err, stderr, stdout) => {
 fs.unlinkSync(media)
 if (err) return m.reply(err)
 let buff = fs.readFileSync(ran)
-zets.sendMessage(m.chat, { audio: buff, mimetype: 'audio/mpeg' }, { quoted : m })
+client.sendMessage(m.chat, { audio: buff, mimetype: 'audio/mpeg' }, { quoted : m })
 fs.unlinkSync(ran)
 })
 } else m.reply(`Balas audio yang ingin diubah dengan caption *${prefix + command}*`)
@@ -2422,7 +2417,7 @@ let teks = `
 Info: *bold* hash is Locked
 ${Object.entries(global.db.data.sticker).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
 `.trim()
-zets.sendText(m.chat, teks, m, { mentions: Object.values(global.db.data.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+client.sendText(m.chat, teks, m, { mentions: Object.values(global.db.data.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
 }
 break
 case 'lockcmd': {
@@ -2452,7 +2447,7 @@ case 'getmsg': {
 if (!text) throw `Example : ${prefix + command} file name\n\nLihat list pesan dengan ${prefix}listmsg`
 let msgs = global.db.data.database
 if (!(text.toLowerCase() in msgs)) throw `'${text}' tidak terdaftar di list pesan`
-zets.copyNForward(m.chat, msgs[text.toLowerCase()], true)
+client.copyNForward(m.chat, msgs[text.toLowerCase()], true)
 }
 break
 case 'listmsg': {
@@ -2481,7 +2476,7 @@ if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
 				let buttons = [
 { buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
 ]
-zets.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await zets.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, zets.user.name, m)
+client.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await client.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, client.user.name, m)
 }
 			break
 case 'keluar': case 'leave': {
@@ -2492,12 +2487,12 @@ if (!room) {
 let buttons = [
 { buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner \`\`\``)
+await client.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner \`\`\``)
 throw false
 }
 m.reply('Ok')
 let other = room.other(m.sender)
-if (other) await zets.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
+if (other) await client.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
 delete this.anonymous[room.id]
 if (command === 'leave') break
 }
@@ -2508,7 +2503,7 @@ if (Object.values(this.anonymous).find(room => room.check(m.sender))) {
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, client.user.name, m)
 throw false
 }
 let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
@@ -2517,10 +2512,10 @@ let buttons = [
 { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await zets.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, zets.user.name, m)
+await client.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, client.user.name, m)
 room.b = m.sender
 room.state = 'CHATTING'
-await zets.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, zets.user.name, m)
+await client.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, client.user.name, m)
 } else {
 let id = + new Date
 this.anonymous[id] = {
@@ -2538,7 +2533,7 @@ return who === this.a ? this.b : who === this.b ? this.a : ''
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, client.user.name, m)
 }
 break
 }
@@ -2550,11 +2545,11 @@ if (!romeo) {
 let buttons = [
 { buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner\`\`\``)
+await client.sendButtonText(m.chat, buttons, `\`\`\`Kamu Sedang Tidak Berada Di Sesi Anonymous, Tekan Button Untuk Mencari Partner\`\`\``)
 throw false
 }
 let other = romeo.other(m.sender)
-if (other) await zets.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
+if (other) await client.sendText(other, `\`\`\`Partner Telah Meninggalkan Sesi Anonymous\`\`\``, m)
 delete this.anonymous[romeo.id]
 let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
 if (room) {
@@ -2562,10 +2557,10 @@ let buttons = [
 { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await zets.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, zets.user.name, m)
+await client.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, client.user.name, m)
 room.b = m.sender
 room.state = 'CHATTING'
-await zets.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, zets.user.name, m)
+await client.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, client.user.name, m)
 } else {
 let id = + new Date
 this.anonymous[id] = {
@@ -2583,7 +2578,7 @@ return who === this.a ? this.b : who === this.b ? this.a : ''
 let buttons = [
 { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
 ]
-await zets.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, zets.user.name, m)
+await client.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, client.user.name, m)
 }
 break
 }
@@ -2592,13 +2587,13 @@ break
 
 case 'public': {
 if (!isCreator) throw mess.owner
-zets.public = true
+client.public = true
 m.reply('Sukse Change To Public Usage')
 }
 break
 case 'self': {
 if (!isCreator) throw mess.owner
-zets.public = false
+client.public = false
 m.reply('Sukses Change To Self Usage')
 }
 break
@@ -2670,7 +2665,7 @@ if (stderr.trim()) m.reply(stderr)
 }
 break
 case 'owner': case 'creator': {
-zets.sendContact(m.chat, global.owner, m)
+client.sendContact(m.chat, global.owner, m)
 }
 break
 
@@ -2679,248 +2674,257 @@ break
 case 'menu': case 'help': case '?': {
 addCountCmd(`#${command.slice(1)}`, sender, _cmd)
 buffer = `https://telegra.ph/file/e7962e067443d2a5bd10b.jpg`
-anu = `Hai kak ${pushname}, have a nice day:)
+anu = `Hi ${pushname} 🌺
+Saya adalah Whatsapp Bot, yang dibangun dengan NodeJS,
+yang siap membantu anda mencari, mendownload dan mencari
+informasi melalui WhatsApp.
    
-✘ *INFO - BOT*
-⫹⫺ *Bot Name:* _${global.botname}_
-⫹⫺ *Owner Name:* _${global.ownername}_
-⫹⫺ *Runtime:* _${runtime(process.uptime())}_
-⫹⫺ *Gc Bot:* _${global.gc}_
-⫹⫺ *Tanggal:* _${moment.tz('Asia/Jakarta').format('DD/MM/YY')}_
-⫹⫺ *Waktu:* _${moment.tz('Asia/Jakarta').format('HH:mm:ss')}_ 
-⫹⫺ *Library:* _Baileys-Md_
+◦ *Name* : ${global.botname}
+◦ *Runtime* : ${runtime(process.uptime())}
+◦ *Library* : Baileys v4.5.8
+◦ *Waktu* : ${moment.tz('Asia/Jakarta').format('DD/MM/YY')} / ${moment.tz('Asia/Jakarta').format('HH:mm:ss')}
 
-✘ *Group*
-   ◦ ${prefix}linkgroup
-   ◦ ${prefix}ephemeral [option]
-   ◦ ${prefix}setppgc [image]
-   ◦ ${prefix}setname [text]
-   ◦ ${prefix}setdesc [text]
-   ◦ ${prefix}group [option]
-   ◦ ${prefix}editinfo [option]
-   ◦ ${prefix}add @user
-   ◦ ${prefix}kick @user
-   ◦ ${prefix}hidetag [text]
-   ◦ ${prefix}tagall [text]
-   ◦ ${prefix}antilink [on/off]
-   ◦ ${prefix}mute [on/off]
-   ◦ ${prefix}promote @user
-   ◦ ${prefix}demote @user
-   ◦ ${prefix}vote [text]
-   ◦ ${prefix}devote
-   ◦ ${prefix}upvote
-   ◦ ${prefix}cekvote
-   ◦ ${prefix}hapusvote
+Jika ada eror, atau ingin sewa bot silahkan hubungi owner.
 
-✘ *Downloader*
-   ◦ ${prefix}tiktoknowm [url]
-   ◦ ${prefix}tiktokwm [url]
-   ◦ ${prefix}tiktokmp3 [url]
-   ◦ ${prefix}instagram [url]
-   ◦ ${prefix}twitter [url]
-   ◦ ${prefix}twittermp3 [url]
-   ◦ ${prefix}facebook [url]
-   ◦ ${prefix}pinterestdl [url]
-   ◦ ${prefix}ytmp3 [url]
-   ◦ ${prefix}ytmp4 [url]
-   ◦ ${prefix}getmusic [query]
-   ◦ ${prefix}getvideo [query]
-   ◦ ${prefix}umma [url]
-   ◦ ${prefix}joox [query]
-   ◦ ${prefix}soundcloud [url]
+–   *M A I N*
 
-✘ *Searching*
-   ◦ ${prefix}play [query]
-   ◦ ${prefix}yts [query]
-   ◦ ${prefix}google [query]
-   ◦ ${prefix}gimage [query]
-   ◦ ${prefix}pinterest [query]
-   ◦ ${prefix}wallpaper [query]
-   ◦ ${prefix}wikimedia [query]
-   ◦ ${prefix}ytsearch [query]
-   ◦ ${prefix}ringtone [query]
-   ◦ ${prefix}stalk [option] [query]
+	◦ ${prefix}menu
+	◦ ${prefix}afk
+	◦ ${prefix}sewa
 
-✘ *Random*
-   ◦ ${prefix}coffe
-   ◦ ${prefix}quotesanime
-   ◦ ${prefix}motivasi
-   ◦ ${prefix}dilanquote
-   ◦ ${prefix}bucinquote
-   ◦ ${prefix}katasenja
-   ◦ ${prefix}puisi
-   ◦ ${prefix}couple
-   ◦ ${prefix}anime
-   ◦ ${prefix}waifu
-   ◦ ${prefix}husbu
-   ◦ ${prefix}neko
-   ◦ ${prefix}shinobu
-   ◦ ${prefix}waifus (nsfw)
-   ◦ ${prefix}nekos (nsfw)
-   ◦ ${prefix}trap (nsfw)
-   ◦ ${prefix}blowjob (nsfw)
+–   *G R O U P*
 
-✘ *Textpro*
-   ◦ ${prefix}3dchristma
-   ◦ ${prefix}3ddeepsea
-   ◦ ${prefix}americanflag
-   ◦ ${prefix}3dscifi
-   ◦ ${prefix}3drainbow
-   ◦ ${prefix}3dwaterpipe
-   ◦ ${prefix}halloweenskeleton
-   ◦ ${prefix}sketch
-   ◦ ${prefix}bluecircuit
-   ◦ ${prefix}space
-   ◦ ${prefix}metallic
-   ◦ ${prefix}fiction
-   ◦ ${prefix}greenhorror
-   ◦ ${prefix}transformer
-   ◦ ${prefix}berry
-   ◦ ${prefix}thunder
-   ◦ ${prefix}magma
-   ◦ ${prefix}3dcrackedstone
-   ◦ ${prefix}3dneonlight
-   ◦ ${prefix}impressiveglitch
-   ◦ ${prefix}naturalleaves
-   ◦ ${prefix}fireworksparkle
-   ◦ ${prefix}matrix
-   ◦ ${prefix}dropwater
-   ◦ ${prefix}harrypotter
-   ◦ ${prefix}foggywindow
-   ◦ ${prefix}neondevils
-   ◦ ${prefix}christmasholiday
-   ◦ ${prefix}3dgradient
-   ◦ ${prefix}blackpink
-   ◦ ${prefix}gluetext
+	◦ ${prefix}linkgroup
+	◦ ${prefix}ephemeral *option*
+	◦ ${prefix}setppgc *image*
+	◦ ${prefix}setname *text*
+	◦ ${prefix}setdesc *text*
+	◦ ${prefix}group *option*
+	◦ ${prefix}editinfo *option*
+	◦ ${prefix}add *@user*
+	◦ ${prefix}kick *@user*
+	◦ ${prefix}hidetag *text*
+	◦ ${prefix}tagall *text*
+	◦ ${prefix}antilink *on/off*
+	◦ ${prefix}mute *on/off*
+	◦ ${prefix}promote *@user*
+	◦ ${prefix}demote *@user*
+	◦ ${prefix}vote *text*
+	◦ ${prefix}devote
+	◦ ${prefix}upvote
+	◦ ${prefix}cekvote
+	◦ ${prefix}hapusvote
 
-✘ *Fun*
-   ◦ ${prefix}halah
-   ◦ ${prefix}hilih
-   ◦ ${prefix}huluh
-   ◦ ${prefix}heleh
-   ◦ ${prefix}holoh
-   ◦ ${prefix}jadian
-   ◦ ${prefix}jodohku
-   ◦ ${prefix}delttt
-   ◦ ${prefix}tictactoe
-   ◦ ${prefix}family100
-   ◦ ${prefix}tebak [option]
-   ◦ ${prefix}math [mode]
-   ◦ ${prefix}suitpvp [@tag]
+–   *D O W N L O A D E R*
 
-✘ *Primbon*
-   ◦ ${prefix}nomorhoki
-   ◦ ${prefix}artimimpi
-   ◦ ${prefix}artinama
-   ◦ ${prefix}ramaljodoh
-   ◦ ${prefix}ramaljodohbali
-   ◦ ${prefix}suamiistri
-   ◦ ${prefix}ramalcinta
-   ◦ ${prefix}cocoknama
-   ◦ ${prefix}pasangan
-   ◦ ${prefix}jadiannikah
-   ◦ ${prefix}sifatusaha
-   ◦ ${prefix}rezeki
-   ◦ ${prefix}pekerjaan
-   ◦ ${prefix}nasib
-   ◦ ${prefix}penyakit
-   ◦ ${prefix}tarot
-   ◦ ${prefix}fengshui
-   ◦ ${prefix}haribaik
-   ◦ ${prefix}harisangar
-   ◦ ${prefix}harisial
-   ◦ ${prefix}nagahari
-   ◦ ${prefix}arahrezeki
-   ◦ ${prefix}peruntungan
-   ◦ ${prefix}weton
-   ◦ ${prefix}karakter
-   ◦ ${prefix}keberuntungan
-   ◦ ${prefix}memancing
-   ◦ ${prefix}masasubur
-   ◦ ${prefix}zodiak
-   ◦ ${prefix}shio
+	◦ ${prefix}tiktoknowm *url*
+	◦ ${prefix}tiktokwm *url*
+	◦ ${prefix}tiktokmp3 *url*
+	◦ ${prefix}instagram *url*
+	◦ ${prefix}twitter *url*
+	◦ ${prefix}twittermp3 *url*
+	◦ ${prefix}facebook *url*
+	◦ ${prefix}pinterestdl *url*
+	◦ ${prefix}ytmp3 *url*
+	◦ ${prefix}ytmp4 *url*
+	◦ ${prefix}getmusic *query*
+	◦ ${prefix}getvideo *query*
+	◦ ${prefix}umma *url*
+	◦ ${prefix}joox *query*
+	◦ ${prefix}soundcloud *url*
 
-✘ *Convert*
-   ◦ ${prefix}toimage
-   ◦ ${prefix}removebg
-   ◦ ${prefix}sticker
-   ◦ ${prefix}emojimix
-   ◦ ${prefix}tovideo
-   ◦ ${prefix}togif
-   ◦ ${prefix}tourl
-   ◦ ${prefix}tovn
-   ◦ ${prefix}tomp3
-   ◦ ${prefix}toaudio
-   ◦ ${prefix}ebinary
-   ◦ ${prefix}dbinary
-   ◦ ${prefix}styletext
+–   *S E A R C H*
 
-✘ *Main*
-   ◦ ${prefix}ping
-   ◦ ${prefix}owner
-   ◦ ${prefix}menu / ${prefix}help / ${prefix}?
-   ◦ ${prefix}delete
-   ◦ ${prefix}infochat
-   ◦ ${prefix}quoted
-   ◦ ${prefix}listpc
-   ◦ ${prefix}listgc
-   ◦ ${prefix}listonline
-   ◦ ${prefix}speedtest
+	◦ ${prefix}play *query*
+	◦ ${prefix}yts *query*
+	◦ ${prefix}google *query*
+	◦ ${prefix}gimage *query*
+	◦ ${prefix}pinterest *query*
+	◦ ${prefix}wallpaper *query*
+	◦ ${prefix}wikimedia *query*
+	◦ ${prefix}ytsearch *query*
+	◦ ${prefix}ringtone *query*
+	◦ ${prefix}stalk *option* *query*
 
-✘ *Database*
-   ◦ ${prefix}setcmd
-   ◦ ${prefix}listcmd
-   ◦ ${prefix}delcmd
-   ◦ ${prefix}lockcmd
-   ◦ ${prefix}addmsg
-   ◦ ${prefix}listmsg
-   ◦ ${prefix}getmsg
-   ◦ ${prefix}delmsg
+–   *R A N D O M*
 
-✘ *Anonymous Chat*
-   ◦ ${prefix}anonymous
-   ◦ ${prefix}start
-   ◦ ${prefix}next
-   ◦ ${prefix}keluar
-   ◦ ${prefix}sendkontak
+	◦ ${prefix}coffe
+	◦ ${prefix}quotesanime
+	◦ ${prefix}motivasi
+	◦ ${prefix}dilanquote
+	◦ ${prefix}bucinquote
+	◦ ${prefix}katasenja
+	◦ ${prefix}puisi
+	◦ ${prefix}couple
+	◦ ${prefix}anime
+	◦ ${prefix}waifu
+	◦ ${prefix}husbu
+	◦ ${prefix}neko
+	◦ ${prefix}shinobu
+	◦ ${prefix}waifus (nsfw)
+	◦ ${prefix}nekos (nsfw)
+	◦ ${prefix}trap (nsfw)
+	◦ ${prefix}blowjob (nsfw)
 
-✘ *Islam*
-   ◦ ${prefix}iqra
-   ◦ ${prefix}hadist
-   ◦ ${prefix}alquran
-   ◦ ${prefix}juzamma
-   ◦ ${prefix}tafsirsurah
+–   *M A K E R*
 
-✘ *Voice Changer*
-   ◦ ${prefix}bass
-   ◦ ${prefix}blown
-   ◦ ${prefix}deep
-   ◦ ${prefix}earrape
-   ◦ ${prefix}fast
-   ◦ ${prefix}fat
-   ◦ ${prefix}nightcore
-   ◦ ${prefix}reverse
-   ◦ ${prefix}robot
-   ◦ ${prefix}slow
-   ◦ ${prefix}tupai
+	◦ ${prefix}3dchristma
+	◦ ${prefix}3ddeepsea
+	◦ ${prefix}americanflag
+	◦ ${prefix}3dscifi
+	◦ ${prefix}3drainbow
+	◦ ${prefix}3dwaterpipe
+	◦ ${prefix}halloweenskeleton
+	◦ ${prefix}sketch
+	◦ ${prefix}bluecircuit
+	◦ ${prefix}space
+	◦ ${prefix}metallic
+	◦ ${prefix}fiction
+	◦ ${prefix}greenhorror
+	◦ ${prefix}transformer
+	◦ ${prefix}berry
+	◦ ${prefix}thunder
+	◦ ${prefix}magma
+	◦ ${prefix}3dcrackedstone
+	◦ ${prefix}3dneonlight
+	◦ ${prefix}impressiveglitch
+	◦ ${prefix}naturalleaves
+	◦ ${prefix}fireworksparkle
+	◦ ${prefix}matrix
+	◦ ${prefix}dropwater
+	◦ ${prefix}harrypotter
+	◦ ${prefix}foggywindow
+	◦ ${prefix}neondevils
+	◦ ${prefix}christmasholiday
+	◦ ${prefix}3dgradient
+	◦ ${prefix}blackpink
+	◦ ${prefix}gluetext
 
-✘ *Owner*
-   ◦ ${prefix}react [emoji]
-   ◦ ${prefix}chat [option]
-   ◦ ${prefix}join [link]
-   ◦ ${prefix}leave
-   ◦ ${prefix}block @user
-   ◦ ${prefix}unblock @user
-   ◦ ${prefix}bcgroup [text]
-   ◦ ${prefix}bcall [text]
-   ◦ ${prefix}setppbot [image]
-   ◦ ${prefix}setexif
+–   *F U N*
+
+	◦ ${prefix}halah
+	◦ ${prefix}hilih
+	◦ ${prefix}huluh
+	◦ ${prefix}heleh
+	◦ ${prefix}holoh
+	◦ ${prefix}jadian
+	◦ ${prefix}jodohku
+	◦ ${prefix}delttt
+	◦ ${prefix}tictactoe
+	◦ ${prefix}family100
+	◦ ${prefix}tebak *option*
+	◦ ${prefix}math *mode*
+	◦ ${prefix}suitpvp *@tag*
+
+–   *P R I M B O N*
+
+	◦ ${prefix}nomorhoki
+	◦ ${prefix}artimimpi
+	◦ ${prefix}artinama
+	◦ ${prefix}ramaljodoh
+	◦ ${prefix}ramaljodohbali
+	◦ ${prefix}suamiistri
+	◦ ${prefix}ramalcinta
+	◦ ${prefix}cocoknama
+	◦ ${prefix}pasangan
+	◦ ${prefix}jadiannikah
+	◦ ${prefix}sifatusaha
+	◦ ${prefix}rezeki
+	◦ ${prefix}pekerjaan
+	◦ ${prefix}nasib
+	◦ ${prefix}penyakit
+	◦ ${prefix}tarot
+	◦ ${prefix}fengshui
+	◦ ${prefix}haribaik
+	◦ ${prefix}harisangar
+	◦ ${prefix}harisial
+	◦ ${prefix}nagahari
+	◦ ${prefix}arahrezeki
+	◦ ${prefix}peruntungan
+	◦ ${prefix}weton
+	◦ ${prefix}karakter
+	◦ ${prefix}keberuntungan
+	◦ ${prefix}memancing
+	◦ ${prefix}masasubur
+	◦ ${prefix}zodiak
+	◦ ${prefix}shio
+
+–   *C O N V E R T*
+
+	◦ ${prefix}toimage
+	◦ ${prefix}removebg
+	◦ ${prefix}sticker
+	◦ ${prefix}emojimix
+	◦ ${prefix}tovideo
+	◦ ${prefix}togif
+	◦ ${prefix}tourl
+	◦ ${prefix}tovn
+	◦ ${prefix}tomp3
+	◦ ${prefix}toaudio
+	◦ ${prefix}ebinary
+	◦ ${prefix}dbinary
+	◦ ${prefix}styletext
+
+–   *D A T  A B A S E*
+
+	◦ ${prefix}setcmd
+	◦ ${prefix}listcmd
+	◦ ${prefix}delcmd
+	◦ ${prefix}lockcmd
+	◦ ${prefix}addmsg
+	◦ ${prefix}listmsg
+	◦ ${prefix}getmsg
+	◦ ${prefix}delmsg
+
+–   *A N O N Y M O U S*
+
+	◦ ${prefix}anonymous
+	◦ ${prefix}start
+	◦ ${prefix}next
+	◦ ${prefix}keluar
+	◦ ${prefix}sendkontak
+
+–   *R E L I G I O N*
+
+	◦ ${prefix}iqra
+	◦ ${prefix}hadist
+	◦ ${prefix}alquran
+	◦ ${prefix}juzamma
+	◦ ${prefix}tafsirsurah
+
+–   *V O I C E*
+
+	◦ ${prefix}bass
+	◦ ${prefix}blown
+	◦ ${prefix}deep
+	◦ ${prefix}earrape
+	◦ ${prefix}fast
+	◦ ${prefix}fat
+	◦ ${prefix}nightcore
+	◦ ${prefix}reverse
+	◦ ${prefix}robot
+	◦ ${prefix}slow
+	◦ ${prefix}tupai
+
+–   *O W N E R*
+
+	◦ ${prefix}react *emoji*
+	◦ ${prefix}chat *option*
+	◦ ${prefix}join *link*
+	◦ ${prefix}leave
+	◦ ${prefix}block *@user*
+	◦ ${prefix}unblock *@user*
+	◦ ${prefix}bcgroup *text*
+	◦ ${prefix}bcall *text*
+	◦ ${prefix}setppbot *image*
+	◦ ${prefix}setexif
 `
 var button = [{ buttonId: `dashboard`, buttonText: { displayText: `Dashboard` }, type: 1 }, { buttonId: `owner`, buttonText: { displayText: `Owner` }, type: 1 }]
-zets.sendMessage(m.chat, { caption: `${anu}`, location: { jpegThumbnail: await reSize(buffer, 200, 200) }, buttons: button, footer:  botname, mentions: [m.sender] })
+client.sendMessage(m.chat, { caption: `${anu}`, location: { jpegThumbnail: await reSize(buffer, 200, 200) }, buttons: button, footer:  botname, mentions: [m.sender] })
 }
 break
-//────────────────────[ BATAS TEMAN ]────────────────────
+
+//Batas
 default:
 if (budy.startsWith('=>')) {
 if (!isCreator) return m.reply(mess.owner)
@@ -2982,7 +2986,7 @@ return !0
 		if (m.isBaileys) return
 		let msgs = global.db.data.database
 		if (!(budy.toLowerCase() in msgs)) return
-		zets.copyNForward(m.chat, msgs[budy.toLowerCase()], true)
+		client.copyNForward(m.chat, msgs[budy.toLowerCase()], true)
 		}
 }
 
