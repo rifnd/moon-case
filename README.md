@@ -1,7 +1,7 @@
 <p align="center">
-	<img src="https://telegra.ph/file/2a5478cc469194f5ff894.jpg">
+	<img src="https://telegra.ph/file/86af4bca3faf0f9896d50.jpg">
 </p>
-<h1 align="center">Zets</h1>
+<h1 align="center">zets-bot</h1>
 
 > Simpel whatsapp bot multi device
 
