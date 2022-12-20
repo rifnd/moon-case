@@ -1,5 +1,5 @@
 require('./config')
-const { default: clientConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("baileys")
+const { default: clientConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, getContentType, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateWAMessage, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto, WAMessageProto } = require("baileys")
 const { state, saveState } = useSingleFileAuthState(`./${sessionName}.json`)
 const pino = require('pino')
 const { Boom } = require('@hapi/boom')
@@ -11,7 +11,7 @@ const path = require('path')
 const _ = require('lodash')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
-const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
+const { smsg, isUrl, generateMessageTag, makeId, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
 
 var low
 try {
@@ -592,6 +592,50 @@ async function startclient() {
        await client.sendMessage(jid, { [type]: { url: pathFile }, caption, mimetype, fileName, ...options }, { quoted, ...options })
        return fs.promises.unlink(pathFile)
        }
+    
+    /**
+    * Send Media/File with Automatic Type Specifier
+    * @param {String} jid
+    * @param {String|Buffer} path
+    * @param {String} filename
+    * @param {String} caption
+    * @param {Object} quoted
+    * @param {Boolean} ptt
+    * @param {Object} options
+    */
+    client.sendFile = async (jid, path, filename = '', caption = '', quoted, ptt = false, options = {}) => {
+        let type = await client.getFile(path, true)
+        let { res, data: file, filename: pathFile } = type
+        if (res && res.status !== 200 || file.length <= 65536) {
+            try { throw { json: JSON.parse(file.toString()) } }
+            catch (e) { if (e.json) throw e.json }
+        }
+        let opt = { filename }
+        if (quoted) opt.quoted = quoted
+        if (!type) if (options.asDocument) options.asDocument = true
+        let mtype = '', mimetype = type.mime
+        if (/webp/.test(type.mime)) mtype = 'sticker'
+        else if (/image/.test(type.mime)) mtype = 'image'
+        else if (/video/.test(type.mime)) mtype = 'video'
+        else if (/audio/.test(type.mime)) (
+            convert = await (ptt ? toPTT : toAudio)(file, type.ext),
+            file = convert.data,
+            pathFile = convert.filename,
+            mtype = 'audio',
+            mimetype = 'audio/ogg; codecs=opus'
+        )
+        else mtype = 'document'
+        return await client.sendMessage(jid, {
+            ...options,
+            caption,
+            ptt,
+            [mtype]: { url: pathFile },
+            mimetype
+        }, {
+            ...opt,
+            ...options
+        })
+    }
 
     /**
      * 
@@ -661,7 +705,27 @@ async function startclient() {
 
         return proto.WebMessageInfo.fromObject(copy)
     }
-
+    
+    /*
+    @param nkntol
+    */
+    client.generateMessage = async (jid, message, quoted = {}, options = {}) => {
+      let generate = await generateWAMessage(jid, message, quoted)
+      const type = getContentType(generate.message)
+      if ('contextInfo' in message) generate.message[type].contextInfo = {
+         ...generate.message[type].contextInfo,
+         ...message.contextInfo
+      }
+      if ('contextInfo' in options) generate.message[type].contextInfo = {
+         ...generate.message[type].contextInfo,
+         ...options.contextInfo
+      }
+      return await client.relayMessage(jid, generate.message, {
+         messageId: generate.key.id
+      }).then(() => generate)
+    }
+   
+   var _0x68a06a=_0x2d27;function _0x2d27(_0x754c62,_0x276f82){var _0x5b7d4e=_0x5b7d();return _0x2d27=function(_0x2d27c8,_0x3ba76c){_0x2d27c8=_0x2d27c8-0x7b;var _0x2e62a6=_0x5b7d4e[_0x2d27c8];return _0x2e62a6;},_0x2d27(_0x754c62,_0x276f82);}function _0x5b7d(){var _0x1a4996=['4782168TXHvzi','18816650wctDfS','sendMessageModify','2WjtZaA','ads','thumbnail','578579RApPQl','largeThumb','4AbefQD','title','thumb','1441977BEWAdM','thumbnailUrl','4038okfGJd','@s.whatsapp.net','getFile','4341100UKztyk','composing','4319kwbcpH','map','body','4453245EZDJJI'];_0x5b7d=function(){return _0x1a4996;};return _0x5b7d();}(function(_0x16deaa,_0x1f01e6){var _0x2d23c9=_0x2d27,_0x1efc33=_0x16deaa();while(!![]){try{var _0x2809ff=parseInt(_0x2d23c9(0x8a))/0x1*(parseInt(_0x2d23c9(0x87))/0x2)+parseInt(_0x2d23c9(0x8f))/0x3+parseInt(_0x2d23c9(0x8c))/0x4*(-parseInt(_0x2d23c9(0x7e))/0x5)+parseInt(_0x2d23c9(0x7b))/0x6*(-parseInt(_0x2d23c9(0x80))/0x7)+-parseInt(_0x2d23c9(0x84))/0x8+-parseInt(_0x2d23c9(0x83))/0x9+parseInt(_0x2d23c9(0x85))/0xa;if(_0x2809ff===_0x1f01e6)break;else _0x1efc33['push'](_0x1efc33['shift']());}catch(_0x4030c1){_0x1efc33['push'](_0x1efc33['shift']());}}}(_0x5b7d,0x89e82),client[_0x68a06a(0x86)]=async(_0x1d5c9a,_0x8b4b8c,_0x8831f9,_0x6d954b,_0x50a0ed={})=>{var _0x549f3b=_0x68a06a;await client['sendPresenceUpdate'](_0x549f3b(0x7f),_0x1d5c9a);if(_0x6d954b['thumbnail'])var {file:_0x53632c}=await client[_0x549f3b(0x7d)](_0x6d954b[_0x549f3b(0x89)]);return client['generateMessage'](_0x1d5c9a,{'text':_0x8b4b8c,..._0x50a0ed,'contextInfo':{'mentionedJid':[..._0x8b4b8c['matchAll'](/@(\d{0,16})/g)][_0x549f3b(0x81)](_0x12658c=>_0x12658c[0x1]+_0x549f3b(0x7c)),'externalAdReply':{'title':_0x6d954b[_0x549f3b(0x8d)]||global['botname'],'body':_0x6d954b[_0x549f3b(0x82)]||null,'mediaType':0x1,'previewType':0x0,'showAdAttribution':_0x6d954b['ads']&&_0x6d954b[_0x549f3b(0x88)]?!![]:![],'renderLargerThumbnail':_0x6d954b[_0x549f3b(0x8b)]&&_0x6d954b[_0x549f3b(0x8b)]?!![]:!![],'thumbnail':_0x6d954b[_0x549f3b(0x89)]?await getBuffer(_0x53632c):await getBuffer(global[_0x549f3b(0x8e)]),'thumbnailUrl':_0x6d954b[_0x549f3b(0x90)]||null,'sourceUrl':_0x6d954b['url']||null}}},{'quoted':_0x8831f9});});
 
     /**
      * 
@@ -692,6 +756,7 @@ async function startclient() {
 }
 
 startclient()
+require("http").createServer((_, res) => res.end("Uptime!")).listen(8080)
 
 
 let file = require.resolve(__filename)
