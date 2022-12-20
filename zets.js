@@ -2121,100 +2121,12 @@ m.reply(`Example : ${prefix +command} type id\n\nList Type :\n1. ff (Free Fire)\
 break
 
 //────────────────────[ DOWNLOADER ]────────────────────
-
-case 'tiktok': {
-if (!text) throw 'Masukkan Query Link!'
-m.reply(mess.wait)
-hx.ttdownloader(q).then( data => {
-client.sendMessage(m.chat, {
-video: { url: data.wm },
-caption: `Kamu bisa mengubahnya menjadi Vidio Tanpa Watermark atau Audio, pencet tombol dibawah untuk mengubahnya!`,
-buttons: [{buttonId: `${prefix}ttnowm ${args[0]} ${m.sender}`, buttonText: { displayText: "Tiktok Nowm" }, type: 1 }],
-footer: "Untuk Mengubah Ke Audio Gunakan Manual #tiktokaudio *link*"
-}, { quoted: m })
-})
-}
-break
-
-case 'ttnowm':
-if (!text) throw 'Masukkan Query Link!'
-m.reply(mess.wait)
-hx.ttdownloader(q).then( data => {
-client.sendMessage(m.chat, { video: { url: data.nowm }, mimetype: 'video/mp4' }, { quoted: m })
-})
-	break
-
-case 'ttaudio':
-if (!text) throw 'Masukkan Query Link!'
-m.reply(mess.wait)
-hx.ttdownloader(q).then( data => {
-client.sendMessage(m.chat, { audio: { url: data.nowm }, mimetype: 'audio/mp4' }, { quoted: m })
-})
-	break
-
-case 'ig': case 'igdl': case 'instagram': {
-if (!text) throw 'Masukkan Query Link!'
-if (!isUrl(args[0]) && !args[0].includes('instagram.com')) throw 'Link yang kamu berikan tidak.valid'
-m.reply(mess.wait)
-let urlnya = text
-	hx.igdl(urlnya)
-	.then(async(result) => {
-		for(let i of result.medias){
-			if(i.url.includes('mp4')){
-				let link = await getBuffer(i.url)
-client.sendMessage(m.chat, { video: link, }, { quoted: m })
-} else {
-let link = await getBuffer(i.url)
-  client.sendMessage(m.chat, { image: link, }, { quoted: m })  
-}
-}
-}).catch((err) => m.reply(`Server eror`))
-}		
-			break
-
-case 'igs': case 'igstory': case 'instagramstory': {
-if (!text) throw 'Masukkan Username!'
-m.reply(mess.wait)
-	hx.igstory(text)
-	.then(async(result) => {
-		for(let i of result.medias){
-			if(i.url.includes('mp4')){
-				let link = await getBuffer(i.url)
-client.sendMessage(m.chat, { video: link, }, { quoted: m })
-} else {
-let link = await getBuffer(i.url)
-  client.sendMessage(m.chat, { image: link, }, { quoted: m })  
-}
-}
-}).catch((err) => m.reply(`Sorry the username was not found`))
-}
-break
-
 case 'joox': case 'jooxdl': {
 if (!text) throw 'No Query Title'
 m.reply(mess.wait)
 let anu = await fetchJson(`https://api.lolhuman.xyz/api/jooxplay?apikey=${global.lolhuman}&query=${text}`)
 let msg = await client.sendImage(m.chat, anu.result.image, `⌕ Title : ${anu.result.info.song}\n⌕ Album : ${anu.result.info.album}\n⌕ Singer : ${anu.result.info.song}\n⌕ Publish : ${anu.result.info.date}\n⌕ Lirik :\n${anu.result.audio[0].link}`, m)
 client.sendMessage(m.chat, { audio: { url: anu.result.audio[0].link }, mimetype: 'audio/mpeg' }, { quoted: msg })
-}
-break
-
-case 'fbdl': case 'fb': case 'facebook': {
-if (!text) throw 'Masukkan Query Link!'
-if (!isUrl(args[0]) && !args[0].includes('facebook.com')) throw 'Link yang kamu berikan tidak.valid'
-m.reply(mess.wait)
-xa.Facebook(`${text}`).then(async (data) => {
-let txt = `*----「 FACEBOOK MP4 」----*\n\n`
-txt += `*• Title :* ${data.title}\n`
-txt += `*• Quality :* ${data.medias[1].quality}\n`
-txt += `*• Type :* ${data.medias[1].extension}\n`
-txt += `*• Size :* ${data.medias[1].formattedSize}\n`
-txt += `*• Url Source :* ${data.url}\n\n`
-txt += `*Halo Kak ${pushname} Bot Telah Mendapatkan Title Tersebut Silahkan Tunggu Beberapa Menit, Jangan Lupa Donasi Ya Kak*`
-client.sendMessage(m.chat, { video: { url: data.medias[1].url }, caption: `${txt}`}, { quoted: m })
-}).catch((err) => {
-m.reply(`*Gagal Saat mendownload media dan mengirm video*`)
-})
 }
 break
 
@@ -2352,8 +2264,7 @@ ${id}`)
 		break
 
 //────────────────────[ VOICE CHANGER ]────────────────────
-
-		   case 'bass': case 'blown': case 'deep': case 'earrape': case 'fast': case 'fat': case 'nightcore': case 'reverse': case 'robot': case 'slow': case 'smooth': case 'tupai':
+case 'bass': case 'blown': case 'deep': case 'earrape': case 'fast': case 'fat': case 'nightcore': case 'reverse': case 'robot': case 'slow': case 'smooth': case 'tupai':
 try {
 let set
 if (/bass/.test(command)) set = '-af equalizer=f=54:width_type=o:width=2:g=20'
