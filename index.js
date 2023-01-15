@@ -274,7 +274,7 @@ async function startclient() {
         console.log('Connected...', update)
     })
 
-    client.ev.on('creds.update', saveState)
+    client.ev.on('creds.update', saveCreds)
 
     /** Resize Image
       *
