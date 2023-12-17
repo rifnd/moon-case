@@ -1,53 +1,40 @@
 const fs = require('fs')
 const chalk = require('chalk')
 
-//api
-global.xteam = 'apivproject'
-global.lolhuman = 'yourkey'
-
-//stick
-global.author = 'Follow Instagram\n  @naando.io  '
-global.packname = 'zets - bot\n'
-
-//Link
-global.gc = 'https://bit.ly/3KMlmv2'
-global.linkyt = 'https://youtube.com/channel/UC9Si3U0o9dGS9MDfJR5iF6Q'
-global.linkgc = 'https://chat.whatsapp.com/DwP6uHYBWBc6TBSsNJrzwN'
-
-// Othr
-global.owner = ['6281252848955']
-global.premium = ['0']
-global.ownername = 'znan'
-global.botname = 'zets - bot'
-global.wm = '© zets'
-global.footer = 'ꜱɪᴍᴘʟᴇ ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴢᴇᴛꜱ ッ'
-global.sessionName = 'session'
-global.prefa = ['','!','.','🐦','🐤','🗿']
-global.sp = '∘'
-global.mess = {
-    success: 'Berhasil',
-    eror: 'Error',
-    admin: 'Fitur Khusus Admin Group!',
-    botAdmin: 'Bot Harus Menjadi Admin Terlebih Dahulu!',
-    owner: 'Fitur Khusus Owner Bot',
-    group: 'Fitur Digunakan Hanya Untuk Group!',
-    private: 'Fitur Digunakan Hanya Untuk Private Chat!',
-    bot: 'Fitur Khusus Pengguna Nomor Bot',
-    wait: 'Tunggu sebentar, sedang di proses',
-    endLimit: 'Limit Harian Anda Telah Habis, Limit Akan Direset Setiap Jam 12',
-}
-global.limitawal = {
-    premium: "Infinity",
-    free: 100
+global.set = {
+  owner: ['6281252848955'],
+  pairingNumber: '13655658639',
+  prefa: ['😁', '😂', '🍟'],
+  wm: '© moon-bot',
+  footer: 'ᴍᴏᴏɴ ʙᴏᴛ ᴄᴀꜱᴇ',
+  packname: 'Sticker By',
+  author: 'moon whatsapp bot',
+  link: '',
+  thumbnail: ''
 }
 
-//gambar
-global.thumb = 'https://telegra.ph/file/86af4bca3faf0f9896d50.jpg'
+global.menu = {
+  owner: ['>', '=>', 'public', 'self']
+}
+
+global.status = Object.freeze({
+  invalid: 'Invalid url',
+  wrong: 'Wrong format.',
+  fail: 'Can\'t get metadata',
+  error: 'Error occurred',
+  errorF: 'Sorry this feature is in error.',
+  premium: 'This feature only for premium user.',
+  owner: 'This command only for owner.',
+  group: 'This command will only work in groups.',
+  botAdmin: 'This command will work when I become an admin.',
+  admin: 'This command only for group admin.',
+  private: 'Use this command in private chat.',
+})
 
 let file = require.resolve(__filename)
 fs.watchFile(file, () => {
 	fs.unwatchFile(file)
-	console.log(chalk.redBright(`Update'${__filename}'`))
+	console.log(chalk.redBright(`Update' ${__filename}'`))
 	delete require.cache[file]
 	require(file)
 })
