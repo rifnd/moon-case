@@ -13,6 +13,13 @@ global.set = {
   thumbnail: ''
 }
 
+global.APIs = {
+  alya: 'https://api.alyachan.pro'
+}
+global.APIKeys = {
+  'https://api.alyachan.pro': 'jayabaya'
+}
+
 global.menu = {
   owner: ['>', '=>', 'public', 'self']
 }

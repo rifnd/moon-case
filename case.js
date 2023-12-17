@@ -1,11 +1,9 @@
-process.on('uncaughtException', console.error) //Error log
+process.on('uncaughtException', console.error) /** error log */
 require('./config')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
-const {
-  exec
-} = require('child_process')
+const { exec } = require('child_process')
 
 module.exports = client = async (client, m, chatUpdate, store) => {
   try {
@@ -26,7 +24,7 @@ module.exports = client = async (client, m, chatUpdate, store) => {
     const qmsg = (quoted.msg || quoted)
     const isMedia = /image|video|sticker|audio/.test(mime)
 
-    // Group
+    /** group */
     const groupMetadata = m.isGroup ? await hisoka.groupMetadata(m.chat).catch(e => {}) : ''
     const groupName = m.isGroup ? groupMetadata.subject : ''
     const participants = m.isGroup ? await groupMetadata.participants : ''
@@ -65,99 +63,105 @@ module.exports = client = async (client, m, chatUpdate, store) => {
       console.error(err)
     }
 
-    // Public & Self
+    /** Public & Self */
     if (!client.public) {
       if (!m.key.fromMe) return
     }
 
-    // Push Message To Console && Auto Read
+    /** Push Message To Console && Auto Read */
     if (m.message) {
       client.readMessages([m.key])
       console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date())), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('FROM'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('IN'), chalk.green(m.isGroup ? pushname : 'PC', m.chat))
     }
 
-    // write database every 1 minute
+    /** write database every 1 minute */
     setInterval(() => {
       fs.writeFileSync('./src/database.json', JSON.stringify(global.db, null, 2))
     }, 60 * 1000)
 
+    /** This is memon ( menu moon ) */
     switch (command) {
-        
-      case prefix + 'public': {
+      case 'public': {
         if (!isCreator) return client.sendText(m.chat, status.owner, m)
         client.public = true
         client.sendText(m.chat, 'Success change to public', m)
       }
       break
-        
-      case prefix + 'self': {
+
+      case 'self': {
         if (!isCreator) client.sendText(m.chat, status.owner, m)
         client.public = false
         client.sendText(m.chat, 'Success change to self', m)
       }
       break
 
-      case prefix + 'owner':
-      case prefix + 'creator': {
+      case 'owner':
+      case 'creator': {
         client.sendContact(m.chat, global.set.owner, m)
       }
       break
 
-      default:
-        if (budy.startsWith('=>')) {
-          if (!isCreator) return client.sendText(m.chat, status.owner, m)
-          function Return(sul) {
-            sat = JSON.stringify(sul, null, 2)
-            bang = util.format(sat)
-            if (sat == undefined) {
-              bang = util.format(sul)
-            }
-            return client.sendText(m.chat, bang, m)
-          }
-          try {
-            client.sendText(util.format(eval(`(async () => { return ${budy.slice(3)} })()`)))
-          } catch (e) {
-            m.reply(String(e))
-          }
-        }
+      case 'help':
+      case 'menu': {
+        Object.entries(global.menu).map(([type, command]) => {
+          text += `┌──⭓ *${Func.toUpper(type)} Menu*\n`
+          text += `│\n`
+          text += `│⎚ ${command.map(a => `${prefix + a}`).join('\n│⎚ ')}\n`
+          text += `│\n`
+          text += `└───────⭓\n\n`
+        }).join('\n\n')
+      }
+      break
 
-        if (budy.startsWith('>')) {
-          if (!isCreator) return m.reply(mess.owner)
-          try {
-            let evaled = await eval(budy.slice(2))
-            if (typeof evaled !== 'string')
-              evaled = require("util").inspect(evaled)
-            await m.reply(evaled)
-          } catch (err) {
-            await m.reply(String(err))
+      /** Eval */
+      default:  
+      if (budy.startsWith('=>')) {
+        if (!isCreator) return client.sendText(m.chat, status.owner, m)
+        function Return(sul) {
+          sat = JSON.stringify(sul, null, 2)
+          bang = util.format(sat)
+          if (sat == undefined) {
+            bang = util.format(sul)
           }
+          return client.sendText(m.chat, bang, m)
         }
+        
+        try {
+          client.sendText(util.format(eval(`(async () => { return ${budy.slice(3)} })()`)))
+        } catch (e) {
+          m.reply(String(e))
+        }
+      }
 
-        if (budy.startsWith('$')) {
-          if (!isCreator) return m.reply(mess.owner)
-          exec(budy.slice(2), (err, stdout) => {
-            if (err) return m.reply(err)
-            if (stdout) return m.reply(stdout)
-          })
+      if (budy.startsWith('>')) {
+        if (!isCreator) return client.sendText(m.chat, status.owner, m)
+        try {
+          let evaled = await eval(budy.slice(2))
+          if (typeof evaled !== 'string')
+          evaled = require('util').inspect(evaled)
+          await m.reply(evaled)
+        } catch (err) {
+          await client.sendText(m.chat, String(err), m)
         }
+      }
 
-        if (isCmd && budy.toLowerCase() != undefined) {
-          if (m.chat.endsWith("broadcast")) return;
-          if (m.isBaileys) return;
-          let msgs = global.db.data.database;
-          if (!(budy.toLowerCase() in msgs)) return;
-          client.copyNForward(m.chat, msgs[budy.toLowerCase()], true);
-        }
+      if (budy.startsWith('$')) {
+        if (!isCreator) return client.sendText(m.chat, status.owner, m)
+        exec(budy.slice(2), (err, stdout) => {
+          if (err) return m.reply(err)
+          if (stdout) return m.reply(stdout)
+        })
+      }
     }
-  } catch (err) {
-    m.reply(util.format(err));
+  } catch (e) {
+    client.sendText(m.chat, util.format(e), m)
   }
-};
+}
 
-let file = require.resolve(__filename);
+let file = require.resolve(__filename)
 fs.watchFile(file, () => {
-  fs.unwatchFile(file);
-  console.log(chalk.redBright(`Update ${__filename}`));
-  delete require.cache[file];
-  require(file);
-});
+  fs.unwatchFile(file)
+  console.log(chalk.redBright(`Update ${__filename}`))
+  delete require.cache[file]
+  require(file)
+})
