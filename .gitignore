@@ -1,5 +1,7 @@
-node_modules
-session/
+.git
+session
+database.json
 package-lock.json
 yarn.lock
-database.json
+node_modules
+temp
