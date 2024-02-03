@@ -1,7 +1,7 @@
-.git
-session
+session/
 database.json
 package-lock.json
 yarn.lock
 node_modules
 temp
+database.json

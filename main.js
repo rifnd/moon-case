@@ -12,7 +12,7 @@ import open from 'open'
 import path from 'path'
 import fs from 'fs'
 
-global.api = async (name, options = {}) => new (await import('./lib/api.js')).default(name, options)
+global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in config.APIs ? config.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname] : config.APIKeys[name in config.APIs ? config.APIs[name] : name] } : {}) })) : '')
 
 const database = (new (await import('./lib/database.js')).default())
 const store = makeInMemoryStore({ logger: Pino({ level: 'silent' }).child({ level: 'silent' }) })
@@ -32,6 +32,7 @@ async function start() {
     global.db = {
       users: {},
       groups: {},
+      setting: {},
       ...(content || {}),
     }
     await database.write(global.db)

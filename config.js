@@ -1,8 +1,16 @@
 // setting your list menu on here
 const menu = {
-  miscs: ['speed', 'owner', 'sc', 'ping', 'quoted'],
-  owner: ['eval', 'exec', 'mute', 'public', 'setpp', 'setname'],
-  group: ['hidetag', 'add', 'welcome', 'leaving', 'setpic', 'settitle', 'linkgroup'],
+  admin: ['hidetag', 'add', 'welcome', 'leaving', 'setpp', 'setname', 'tagall', 'kick', 'promote', 'demote'],
+  converter: ['sticker', 'toimg', 'togif', 'qc', 'ttp', 'attp', 'emojimix'],
+  downloader: ['tiktok', 'tikwm', 'tikmp3', 'facebook', 'instagram', 'igstory', 'twitter', 'threads', 'play', 'ytmp3', 'ytmp4', 'capcut', 'capcutwm', 'cocofun', 'douyin', 'douyinwm', 'douyinmp3', 'likee', 'likeewm', 'pindl'],
+  effect: ['paretro', 'retrolga', 'plumy', 'hdr', 'sepia', 'duotone', 'blackwhite', 'sketch', 'sketchrill', 'oils', 'esragan', 'watercolor', 'galaxy', 'freplace', 'rainbow', 'solarize', 'pinkbir'],
+  fun: ['apakah', 'siapakah', 'kapankah', 'rate', 'benarkah', 'bisakah'],
+  group: ['afk', 'linkgroup', 'delete', 'ava', 'quoted', 'rvo'],
+  internet: ['ytsearch', 'ai', 'aiimg', 'aiarticle', 'bard', 'bing', 'bingimg', 'blackbox', 'aicode', 'gemini', 'waifudiff', 'brainly', 'pinterest', 'google', 'gimage', 'kbbg'],
+  miscs: ['speed', 'owner', 'sc', 'ping', 'checkapi'],
+  owner: ['eval', 'exec', 'mute', 'public', 'setpp', 'setname', 'unblock', 'block', 'setcover', 'autoread', 'setlink'],
+  tools: ['remini', 'recolor', 'ocr', 'calc', 'cekresi', 'ss', 'ssweb', 'shortlink', 'translate', 'tts', 'text2img', 'transcibe', 'nulis', 'removebg', 'toanime', 'tozombie', 'turnme', 'gta5style'],
+  'voice changer': ['bass', 'blown', 'deep', 'earrape', 'fast', 'fat', 'nightcore', 'reverse', 'robot', 'slow', 'smooth', 'tupai'],
 }
 
 const limit = {
@@ -22,17 +30,11 @@ export default {
 
   // Set your URL and API key here
   APIs: {
-    alya: {
-      baseURL: 'https://api.alyachan.pro',
-      Key: 'yourkey',
-    },
+    alya: 'https://api.alyachan.pro'
   },
 
-  // Change your thumbnail & link
-  set: {
-    thumbnail: 'https://iili.io/JAt7vf4.jpg',
-    link: 'https://chat.whatsapp.com/G57unQZ7saFIq2rdpVw0Tu',
-    wm: 'moon-case v1.0.0'
+  APIKeys: {
+    'https://api.alyachan.pro': 'yourkey'
   },
 
   // Set Prefix, Session Name, Database Name and other options here
@@ -44,6 +46,7 @@ export default {
     sessionName: 'session', // for name session
     prefix: /^[./!#+,]/i,
     pairingNumber: '6285786080578', // Example Input : 62xxx
+    wm: 'moon-case v1.0.0',
   },
 
   // Set pack name sticker on here
@@ -96,3 +99,13 @@ function formatSize(bytes, si = true, dp = 2) {
   } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
   return `${bytes.toFixed(dp)} ${units[u]}`
 }
+
+import { fileURLToPath } from 'url'
+import { watchFile, unwatchFile } from 'fs'
+import chalk from 'chalk'
+let file = fileURLToPath(import.meta.url)
+watchFile(file, () => {
+  unwatchFile(file)
+  console.log(chalk.redBright("Update 'config.js'"))
+  import(`${file}?update=${Date.now()}`)
+})
