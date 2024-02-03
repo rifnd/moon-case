@@ -435,7 +435,7 @@ export default async function Message(conn, m, chatUpdate) {
         
       case 'capcut':
       case 'capcutdl': {
-        if (!/(?:https?:\/\/(www\.)?capcut\.com\/template\/detail/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://www.capcut.com/template-detail/7261093127484722433?template_id=7261093127484722433&share_token=37433a9d-37b0-407e-a0b8-a92d70b41631&enter_from=template_detail&region=ID&language=in&platform=copy_link&is_copy_link=1`)
+        if (!m.text.match(/(https:\/\/capcut.com)/g)) return m.reply(`Example : ${prefix + command} https://www.capcut.com/template-detail/7261093127484722433?template_id=7261093127484722433&share_token=37433a9d-37b0-407e-a0b8-a92d70b41631&enter_from=template_detail&region=ID&language=in&platform=copy_link&is_copy_link=1`)
         await m.reply('wait')
         const json = await Func.fetchJson(API('alya', '/api/capcut', {
           url: Func.isUrl(m.text), type: 'nowatermark'
@@ -446,7 +446,7 @@ export default async function Message(conn, m, chatUpdate) {
       break
         
       case 'capcutwm': {
-        if (!/(?:https?:\/\/(www\.)?capcut\.com\/template\/detail/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://www.capcut.com/template-detail/7261093127484722433?template_id=7261093127484722433&share_token=37433a9d-37b0-407e-a0b8-a92d70b41631&enter_from=template_detail&region=ID&language=in&platform=copy_link&is_copy_link=1`)
+        if (!m.text.match(/(https:\/\/capcut.com)/g)) return m.reply(`Example : ${prefix + command} https://www.capcut.com/template-detail/7261093127484722433?template_id=7261093127484722433&share_token=37433a9d-37b0-407e-a0b8-a92d70b41631&enter_from=template_detail&region=ID&languag=in&platform=copy_link&is_copy_link=1`)
         await m.reply('wait')
         const json = await Func.fetchJson(API('alya', '/api/capcut', {
           url: Func.isUrl(m.text), type: 'watermark'
