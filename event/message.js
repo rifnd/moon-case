@@ -323,7 +323,7 @@ export default async function Message(conn, m, chatUpdate) {
       case 'twit':
       case 'twt':
       case 'twitter': {
-          if (!/https?:\/\/(www\.)?(twitter|X)\.com\/.*\/status/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://twitter.com/jokowi/status/1687008875864846336?s=20`)
+        if (!/https?:\/\/(www\.)?(twitter|X)\.com\/.*\/status/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://twitter.com/jokowi/status/1687008875864846336?s=20`)
         await m.reply('wait')
         let old = new Date()
         const json = await Func.fetchJson(API('alya', '/api/twitter', {
@@ -339,7 +339,7 @@ export default async function Message(conn, m, chatUpdate) {
       case 'threads':
       case 'thread':
       case 'threadsdl': {
-          if (!/https?:\/\/(www\.)?(threads)\.net/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://www.threads.net/t/CuiXbGvPyJz/?igshid=NTc4MTIwNjQ2YQ==`)
+        if (!/https?:\/\/(www\.)?(threads)\.net/i.test(m.text)) return m.reply(`Example : ${prefix + command} https://www.threads.net/t/CuiXbGvPyJz/?igshid=NTc4MTIwNjQ2YQ==`)
         await m.reply('wait')
         let old = new Date()
         const json = await Func.fetchJson(API('alya', '/api/threads', {
@@ -920,9 +920,9 @@ export default async function Message(conn, m, chatUpdate) {
       break
 
       case 'setlink': {
-        if (!m.text) return m.reply(`Example : ${prefix + command} https://wa`)
+        if (!/^https:\/\//i.test(m.text)) return m.reply(`Example : ${prefix + command} https://wa`)
         m.reply('wait')
-        db.setting.link = m.text
+        db.setting.link = Func.isUrl(m.text)
         m.reply('Link successfully changed')
       }
       break
@@ -1237,6 +1237,7 @@ export default async function Message(conn, m, chatUpdate) {
         if (users.length == 0) return m.reply('Fuck You 🖕')
         await conn.groupParticipantsUpdate(m.from, users, 'promote').then((res) => m.reply(Func.Format(res))).catch((err) => m.reply(Func.Format(err)))
       }
+      break
         
       case 'demote': {
         if (!m.isGroup) return m.reply('group')
@@ -1246,6 +1247,7 @@ export default async function Message(conn, m, chatUpdate) {
         if (users.length == 0) return m.reply('Fuck You 🖕')
         await conn.groupParticipantsUpdate(m.from, users, 'demote').then((res) => m.reply(Func.Format(res))).catch((err) => m.reply(Func.Format(err)))
       }
+      break
 
       case 'welcome': {
         if (!m.isAdmin) return m.reply('admin')
