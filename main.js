@@ -44,12 +44,12 @@ async function start() {
   const msgRetryCounterCache = new NodeCache() // for retry message, "waiting message"
 
   const conn = baileys.default({
-    logger: Pino({ level: 'silent' }).child({ level: 'silent' }), // hide log
+    logger: Pino({ level: 'fatal' }).child({ level: 'fatal' }), // hide log
     printQRInTerminal: !pairingCode, // popping up QR in terminal log
     mobile: useMobile, // mobile api (prone to bans)
     auth: {
       creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: 'silent' }).child({ level: 'silent' })),
+      keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: 'fatal' }).child({ level: 'fatal' })),
     },
     browser: ['Ubuntu', 'Chrome', '20.0.04'],
     markOnlineOnConnect: false, // set false for offline

@@ -30,11 +30,11 @@ export default {
 
   // Set your URL and API key here
   APIs: {
-    alya: 'https://api.alyachan.pro'
+    alya: 'https://api.alyachan.dev'
   },
 
   APIKeys: {
-    'https://api.alyachan.pro': 'yourkey'
+    'https://api.alyachan.dev': 'yourkey'
   },
 
   // Set Prefix, Session Name, Database Name and other options here
@@ -51,11 +51,11 @@ export default {
 
   // Set pack name sticker on here
   Exif: {
-    packId: 'https://api.alyachan.pro',
+    packId: 'https://api.alyachan.dev',
     packName: `Sticker Ini Dibuat Oleh :`,
-    packPublish: 'naando.io',
+    packPublish: '@naando.io',
     packEmail: 'rifando.p.p@gmail.com',
-    packWebsite: 'https://api.alyachan.pro',
+    packWebsite: 'https://api.alyachan.dev',
     androidApp: 'https://play.google.com/store/apps/details?id=com.bitsmedia.android.muslimpro',
     iOSApp: 'https://apps.apple.com/id/app/muslim-pro-al-quran-adzan/id388389451?|=id',
     emojis: [],
