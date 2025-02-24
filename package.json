@@ -1,46 +1,49 @@
 {
-  "name": "moon-case",
-  "version": "1.0.0",
-  "description": "a WhatsApp Bot Using Library @whiskeysockets/baileys",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js --max-old-space-size=8192",
-    "dev": "pm2 start index.js --name moon-bot --max-memory-restart 8G -- --max-old-space-size=8192"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rifnd/moon-case.git"
-  },
-  "keywords": [
-    "weabot",
-    "wa-bot",
-    "whatsapp-bot"
-  ],
-  "author": "rifnd",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/rifnd/moon-case/issues"
-  },
-  "homepage": "https://github.com/rifnd/moon-case#readme",
-  "dependencies": {
-    "@whiskeysockets/baileys": "github:whiskeysockets/baileys",
-    "chalk": "^5.3.0",
-    "child_process": "^1.0.2",
-    "file-type": "^18.5.0",
-    "fluent-ffmpeg": "^2.1.2",
-    "moment-timezone": "^0.5.43",
-    "mongoose": "^6.3.3",
-    "node-id3": "^0.2.6",
-    "node-webpmux": "^3.1.7",
-    "yt-search": "^2.10.4"
-  },
-  "devDependencies": {
-    "@adiwajshing/keyed-db": "^0.2.4",
-    "axios": "^1.4.0",
-    "jimp": "^0.16.13",
-    "link-preview-js": "^3.0.4",
-    "open": "^8.4.2",
-    "qrcode-terminal": "0.12.0"
-  }
+   "name": "moon-case",
+   "version": "1.5.0",
+   "description": "A whatsApp bot using library baileys",
+   "main": "index.js",
+   "type": "module",
+   "scripts": {
+      "start": "node index.js --max-old-space-size=8192",
+      "dev": "pm2 start index.js --name moon-bot --max-memory-restart 8G -- --max-old-space-size=8192"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/rifnd/moon-case.git"
+   },
+   "keywords": [
+      "weabot",
+      "wa-bot",
+      "whatsapp-bot"
+   ],
+   "author": "rifnd",
+   "license": "GPL-3.0-or-later",
+   "bugs": {
+      "url": "https://github.com/rifnd/moon-case/issues"
+   },
+   "homepage": "https://github.com/rifnd/moon-case#readme",
+   "dependencies": {
+      "@moonr/api": "^0.0.1",
+      "@whiskeysockets/baileys": "^6.7.12",
+      "chalk": "^5.3.0",
+      "child_process": "^1.0.2",
+      "dotenv": "^16.4.7",
+      "file-type": "^18.5.0",
+      "fluent-ffmpeg": "^2.1.2",
+      "moment-timezone": "^0.5.43",
+      "mongoose": "^6.3.3",
+      "node-fetch": "^3.3.2",
+      "node-id3": "^0.2.6",
+      "node-webpmux": "^3.1.7",
+      "yt-search": "^2.10.4"
+   },
+   "devDependencies": {
+      "@adiwajshing/keyed-db": "^0.2.4",
+      "axios": "^1.4.0",
+      "jimp": "^0.16.13",
+      "link-preview-js": "^3.0.4",
+      "open": "^8.4.2",
+      "qrcode-terminal": "0.12.0"
+   }
 }

@@ -1,25 +1,17 @@
 import config from './config.js'
 import { Client, Serialize } from './lib/serialize.js'
 import baileys from '@whiskeysockets/baileys'
-const { useMultiFileAuthState, DisconnectReason, makeInMemoryStore, jidNormalizedUser, makeCacheableSignalKeyStore, PHONENUMBER_MCC } = baileys
 import { Boom } from '@hapi/boom'
 import Pino from 'pino'
 import NodeCache from 'node-cache'
 import chalk from 'chalk'
 import readline from 'readline'
-import { parsePhoneNumber } from 'libphonenumber-js'
-import open from 'open'
-import path from 'path'
 import fs from 'fs'
 
-global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in config.APIs ? config.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname] : config.APIKeys[name in config.APIs ? config.APIs[name] : name] } : {}) })) : '')
-
+const { useMultiFileAuthState, DisconnectReason, makeInMemoryStore, jidNormalizedUser, makeCacheableSignalKeyStore, PHONENUMBER_MCC, Browsers, fetchLatestBaileysVersion } = baileys
 const database = (new (await import('./lib/database.js')).default())
 const store = makeInMemoryStore({ logger: Pino({ level: 'silent' }).child({ level: 'silent' }) })
-
 const pairingCode = !!config.options.pairingNumber || process.argv.includes('--pairing')
-const useMobile = process.argv.includes('--mobile')
-
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 const question = (text) => new Promise((resolve) => rl.question(text, resolve))
 
@@ -40,19 +32,20 @@ async function start() {
     global.db = content
   }
 
+  const { version, isLatest } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState(`./${config.options.sessionName}`)
   const msgRetryCounterCache = new NodeCache() // for retry message, "waiting message"
 
   const conn = baileys.default({
+    version,
     logger: Pino({ level: 'fatal' }).child({ level: 'fatal' }), // hide log
     printQRInTerminal: !pairingCode, // popping up QR in terminal log
-    mobile: useMobile, // mobile api (prone to bans)
     auth: {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: 'fatal' }).child({ level: 'fatal' })),
     },
-    browser: ['Ubuntu', 'Chrome', '20.0.04'],
-    markOnlineOnConnect: false, // set false for offline
+    browser: Browsers.ubuntu('Chrome'),
+    markOnlineOnConnect: true, // set false for offline
     generateHighQualityLinkPreview: true, // make high preview link
     getMessage: async (key) => {
       let jid = jidNormalizedUser(key.remoteJid)
@@ -78,10 +71,7 @@ async function start() {
   await Client({ conn, store })
 
   // login use pairing code
-  // source code https://github.com/WhiskeySockets/Baileys/blob/master/Example/example.ts#L61
   if (pairingCode && !conn.authState.creds.registered) {
-    if (useMobile) throw new Error('Cannot use pairing code with mobile api')
-
     let phoneNumber
     if (!!config.options.pairingNumber) {
       phoneNumber = config.options.pairingNumber.replace(/[^0-9]/g, '')
@@ -111,92 +101,9 @@ async function start() {
     }, 3000)
   }
 
-  // login mobile API (prone to bans)
-  // source code https://github.com/WhiskeySockets/Baileys/blob/master/Example/example.ts#L72
-  if (useMobile && !conn.authState.creds.registered) {
-    const { registration } = conn.authState.creds || { registration: {} }
-
-    if (!registration.phoneNumber) {
-      let phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number : `)))
-      phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
-
-      // Ask again when entering the wrong number
-      if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-        console.log(chalk.bgBlack(chalk.redBright("Start with your country's WhatsApp code, Example : 62xxx")))
-
-        phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number : `)))
-        phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
-      }
-
-      registration.phoneNumber = '+' + phoneNumber
-    }
-
-    const phoneNumber = parsePhoneNumber(registration.phoneNumber)
-    if (!phoneNumber.isValid()) throw new Error('Invalid phone number: ' + registration.phoneNumber)
-
-    registration.phoneNumber = phoneNumber.format("E.164")
-    registration.phoneNumberCountryCode = phoneNumber.countryCallingCode
-    registration.phoneNumberNationalNumber = phoneNumber.nationalNumber
-
-    const mcc = PHONENUMBER_MCC[phoneNumber.countryCallingCode]
-    registration.phoneNumberMobileCountryCode = mcc
-
-    async function enterCode() {
-      try {
-        const code = await question(chalk.bgBlack(chalk.greenBright(`Please Enter Your OTP Code : `)))
-        const response = await conn.register(code.replace(/[^0-9]/g, '').trim().toLowerCase())
-        console.log(chalk.bgBlack(chalk.greenBright("Successfully registered your phone number.")))
-        console.log(response)
-        rl.close()
-      } catch (e) {
-        console.error('Failed to register your phone number. Please try again.\n', e)
-        await askOTP()
-      }
-    }
-
-    // from this : https://github.com/WhiskeySockets/Baileys/blob/master/Example/example.ts#L110
-    async function enterCaptcha() {
-      const response = await sock.requestRegistrationCode({ ...registration, method: 'captcha' })
-      const pathFile = path.join(process.cwd(), "temp", "captcha.png")
-      fs.writeFileSync(pathFile, Buffer.from(response.image_blob, 'base64'))
-      await open(pathFile)
-      const code = await question(chalk.bgBlack(chalk.greenBright(`Please Enter Your Captcha Code : `)))
-      fs.unlinkSync(pathFile)
-      registration.captcha = code.replace(/["']/g, '').trim().toLowerCase()
-    }
-
-    async function askOTP() {
-      if (!registration.method) {
-        let code = await question(chalk.bgBlack(chalk.greenBright('What method do you want to use? "sms" or "voice" : ')))
-        code = code.replace(/["']/g, '').trim().toLowerCase()
-
-        if (code !== 'sms' && code !== 'voice') return await askOTP()
-
-        registration.method = code
-      }
-
-      try {
-        await conn.requestRegistrationCode(registration)
-        await enterCode()
-      } catch (e) {
-        console.error('Failed to request registration code. Please try again.\n', e)
-        if (e?.reason === 'code_checkpoint') {
-          await enterCaptcha()
-        }
-        await askOTP()
-      }
-    }
-
-    await askOTP()
-  }
-
   // for auto restart when error client
   conn.ev.on('connection.update', async (update) => {
     const { lastDisconnect, connection, qr } = update
-    if (connection) {
-      console.info(`Connection Status : ${connection}`)
-    }
-
     if (connection === 'close') {
       let reason = new Boom(lastDisconnect?.error)?.output.statusCode
       if (reason === DisconnectReason.badSession) {
@@ -228,11 +135,8 @@ async function start() {
         process.send('reset')
       }
     }
-
     if (connection === 'open') {
-      conn.sendMessage(config.options.owner[0] + '@s.whatsapp.net', {
-        text: `${conn?.user?.name || "conn"} has Connected...`,
-      })
+      console.log('Connected, you login as : ' + '[ ' + conn.user.name + ' ]')
     }
   })
 
@@ -243,17 +147,17 @@ async function start() {
   conn.ev.on('messages.upsert', async (message) => {
     if (!message.messages) return
     const m = await Serialize(conn, message.messages[0])
-    await (await import(`./event/message.js?v=${Date.now()}`)).default(conn, m, message)
+    await (await import(`./lib/system/message.js?v=${Date.now()}`)).default(conn, m, message, database)
   })
 
   // group participants update
   conn.ev.on('group-participants.update', async (message) => {
-    await (await import(`./event/group-participants.js?v=${Date.now()}`)).default(conn, message)
+    await (await import(`./lib/system/group-participants.js?v=${Date.now()}`)).default(conn, message)
   })
 
   // group update
   conn.ev.on('groups.update', async (update) => {
-    await (await import(`./event/group-update.js?v=${Date.now()}`)).default(conn, update)
+    await (await import(`./lib/system/group-update.js?v=${Date.now()}`)).default(conn, update)
   })
 
   // auto reject call when user call
@@ -286,10 +190,9 @@ async function start() {
       if (tmpFiles.length > 0) {
         tmpFiles.filter(v => !v.endsWith('.file')).map(v => fs.unlinkSync('./temp/' + v))
       }
-    } catch {}
+    } catch { }
   }, 60 * 1000 * 10) // every 10 minute
 
   return conn
 }
-
 start()
