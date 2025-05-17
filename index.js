@@ -21,10 +21,10 @@ function start(file) {
 				platform() === 'win32' ? p.kill('SIGINT') : p.kill()
 				isRunning = false
 				start.apply(this, arguments)
-			break
+				break
 			case 'uptime':
 				p.send(process.uptime())
-			break
+				break
 		}
 	}).on('exit', (code) => {
 		isRunning = false

@@ -36,19 +36,24 @@ export default {
    /** change config here */
    options: {
       database: 'database.json', /** End .json when using JSON database or use Mongo URI */
-      owner: ['6281252848955'],
+      owner: ['6285179886349'],
       evaluate_chars: ['=>', '>', '$', '~>', '!', '+', '/', '#', '.'],
       sessionName: 'session',
       prefix: /^[./!#+,]/i,
-      pairingNumber: '6285786080578',
       wm: '© moon-bot',
+      footer: 'ᴍᴏᴏɴ ʙᴏᴛ ᴡʜᴀᴛꜱᴀᴘᴘ ꜱᴍᴀʀᴛ ᴀꜱꜱɪꜱᴛᴀɴᴛ ツ'
+   },
+   /** Pairing code */
+   pairing: {
+      state: false,
+      number: 0
    },
    /**  Set pack name sticker on here */
    Exif: {
       packId: 'https://api.alyachan.dev',
-      packName: `Sticker Ini Dibuat Oleh :`,
+      packName: `This Sticker is Made by :`,
       packPublish: '@naando.io',
-      packEmail: 'rifando.p.p@gmail.com',
+      packEmail: 'contact@moonx.my.id',
       packWebsite: 'https://api.alyachan.dev',
       androidApp: 'https://play.google.com/store/apps/details?id=com.bitsmedia.android.muslimpro',
       iOSApp: 'https://apps.apple.com/id/app/muslim-pro-al-quran-adzan/id388389451?|=id',

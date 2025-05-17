@@ -25,7 +25,7 @@
    "homepage": "https://github.com/rifnd/moon-case#readme",
    "dependencies": {
       "@moonr/api": "^0.0.1",
-      "@whiskeysockets/baileys": "^6.7.12",
+      "@whiskeysockets/baileys": "npm:@neoxr/baileys",
       "chalk": "^5.3.0",
       "child_process": "^1.0.2",
       "dotenv": "^16.4.7",
@@ -33,6 +33,7 @@
       "fluent-ffmpeg": "^2.1.2",
       "moment-timezone": "^0.5.43",
       "mongoose": "^6.3.3",
+      "node-cache": "^5.1.2",
       "node-fetch": "^3.3.2",
       "node-id3": "^0.2.6",
       "node-webpmux": "^3.1.7",
